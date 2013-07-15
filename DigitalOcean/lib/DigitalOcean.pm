@@ -23,8 +23,6 @@ has 'ua' => (
     isa         => 'LWP::UserAgent', 
     required    => 0, 
 	default => sub { LWP::UserAgent->new },
-#    lazy        => 1,
-#    builder     => '_build_ua',
 );
 
 has 'api' => (
@@ -95,14 +93,28 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+
+	for my $droplet (@{$do->droplets}) { 
+		print "Droplet " . $droplet->name . " has id " . $droplet->id . "\n";
+	}
+
+	my $droplet = $do->droplet($droplet_id);
+	$droplet->reboot;
+	$droplet->power_off;
+	$droplet->power_on;
+	$droplet->destroy;
+
+	my $new_droplet = $do->create_droplet(
+					name => 'new_droplet',
+					size_id => $size_id,
+					image_id => $image_id,
+					region_id => $region_id,
+			);
+
+	$new_droplet->enable_backups;
 
 =head1 SUBROUTINES/METHODS
 

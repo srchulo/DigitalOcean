@@ -114,6 +114,7 @@ method disable_backups { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =cut
 
+#doesn't actually rename. fix that!
 method rename { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 destroy

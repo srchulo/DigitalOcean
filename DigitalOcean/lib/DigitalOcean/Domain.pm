@@ -38,7 +38,7 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =cut
 
-method _request($json_obj_key, $request_append, @args) { 
+method _record_request($json_obj_key, $request_append, @args) { 
 	$self->DigitalOcean->json_obj_key($json_obj_key);
 	$self->DigitalOcean->caller('records');
 	$self->DigitalOcean->request_append($request_append);
@@ -56,7 +56,7 @@ method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
 =cut
 
 method records { 
-	$self->_request('records','');
+	$self->_record_request('records','');
 	return $self->DigitalOcean->_decode_many('DigitalOcean::Domain::Record');
 }
 
@@ -65,7 +65,7 @@ method records {
 =cut
 
 method create_record { 
-	$self->_request('record','new', @_);
+	$self->_record_request('record','new', @_);
 	return $self->DigitalOcean->_decode('DigitalOcean::Domain::Record');
 }
 
@@ -74,7 +74,7 @@ method create_record {
 =cut
 
 method record($id) { 
-	$self->_request('record', $id);
+	$self->_record_request('record', $id);
 	$self->DigitalOcean->api_obj->{Domain} = $self;
 	return $self->DigitalOcean->_decode('DigitalOcean::Domain::Record');
 }
