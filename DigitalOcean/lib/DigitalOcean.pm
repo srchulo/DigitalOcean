@@ -201,7 +201,7 @@ This will return an array reference of L<DigitalOcean::Droplet> objects.
 
     my $droplets = $do->droplets;
     
-    for my $droplet (@{$do->droplets}) { 
+    for my $droplet (@{$droplets}) { 
         print $droplet->name . "\n";
     }
 
@@ -216,6 +216,39 @@ sub droplets {
 
 =head2 create_droplet
 
+This will create a new droplet and return a L<DigitalOcean::Droplet> object. The parameters are:
+
+=over 4
+
+=item 
+
+B<name> Required, String, this is the name of the droplet - must be formatted by hostname rules
+
+=item
+
+B<size_id> Required, Numeric, this is the id of the size you would like the droplet created at
+
+=item
+
+B<image_id> Required, Numeric, this is the id of the image you would like the droplet created with
+
+=item
+
+B<region_id> Required, Numeric, this is the id of the region you would like your server in
+
+=item
+
+B<ssh_key_ids> Optional, Numeric CSV, comma separated list of ssh_key_ids that you would like to be added to the server
+
+=back
+
+    my $new_droplet = $do->create_droplet(
+        name => 'new_droplet',
+        size_id => $size_id,
+        image_id => $image_id,
+        region_id => $region_id,
+    );
+
 =cut
 
 sub create_droplet {
@@ -225,6 +258,10 @@ sub create_droplet {
 }
 
 =head2 droplet
+
+This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
+
+    my $droplet = $do->droplet(56789);
 
 =cut
 
@@ -237,6 +274,14 @@ sub droplet {
 
 =head2 regions
 
+This will return an array reference of L<DigitalOcean::Region> objects.
+
+    my $regions = $do->regions;
+    
+    for my $region (@{$regions}) { 
+        print $region->name . "\n";
+    }
+
 =cut
 
 sub regions {
@@ -247,6 +292,14 @@ sub regions {
 }
 
 =head2 images
+
+This will return an array reference of L<DigitalOcean::Image> objects.
+
+    my $images = $do->images;
+    
+    for my $image (@{$images}) { 
+        print $image->name . "\n";
+    }
 
 =cut
 
@@ -259,6 +312,10 @@ sub images {
 
 =head2 image
 
+This will retrieve an image by id and return a L<DigitalOcean::Image> object.
+
+    my $image = $do->image(56789);
+
 =cut
 
 sub image {
@@ -269,6 +326,14 @@ sub image {
 }
 
 =head2 sizes
+
+This will return an array reference of L<DigitalOcean::Size> objects.
+
+    my $sizes = $do->sizes;
+    
+    for my $size (@{$sizes}) { 
+        print $size->name . "\n";
+    }
 
 =cut
 
@@ -281,6 +346,14 @@ sub sizes {
 
 =head2 ssh_keys
 
+This will return an array reference of L<DigitalOcean::SSH::Key> objects.
+
+    my $ssh_keys = $do->ssh_keys;
+    
+    for my $ssh_key (@{$ssh_keys}) { 
+        print $ssh_key->name . "\n";
+    }
+
 =cut
 
 sub ssh_keys {
@@ -292,6 +365,25 @@ sub ssh_keys {
 
 =head2 create_ssh_key
 
+This will create a new ssh key and return a L<DigitalOcean::SSH::Key> object. The parameters are:
+
+=over 4
+
+=item 
+
+B<name> Required, String, the name you want to give this SSH key.
+
+=item
+
+B<ssh_key_pub> Required, String, the actual public SSH key.
+
+=back
+
+    my $new_ssh_key = $do->create_ssh_key(
+        name => 'new_ssh_key',
+        ssh_key_pub => $ssh_key_pub,
+    );
+
 =cut
 
 sub create_ssh_key {
@@ -301,6 +393,10 @@ sub create_ssh_key {
 }
 
 =head2 ssh_key
+
+This will retrieve an ssh_key by id and return a L<DigitalOcean::SSH::Key> object.
+
+    my $ssh_key = $do->ssh_key(56789);
 
 =cut
 
@@ -313,6 +409,14 @@ sub ssh_key {
 
 =head2 domains
 
+This will return an array reference of L<DigitalOcean::Domain> objects.
+
+    my $domains = $do->domains;
+    
+    for my $domain (@{$domains}) { 
+        print $domain->name . "\n";
+    }
+
 =cut
 
 sub domains {
@@ -324,6 +428,25 @@ sub domains {
 
 =head2 create_domain
 
+This will create a new domain and return a L<DigitalOcean::Domain> object. The parameters are:
+
+=over 4
+
+=item 
+
+B<name> Required, String, the domain name
+
+=item
+
+B<ip_address> Required, String, IP address for the domain's initial A record.
+
+=back
+
+    my $new_ssh_key = $do->create_ssh_key(
+        name => 'new_ssh_key',
+        ssh_key_pub => $ssh_key_pub,
+    );
+
 =cut
 
 sub create_domain {
@@ -333,6 +456,10 @@ sub create_domain {
 }
 
 =head2 domain
+
+This will retrieve a domain by id and return a L<DigitalOcean::Domain> object.
+
+    my $domain = $do->domain(56789);
 
 =cut
 
