@@ -197,6 +197,14 @@ sub _package { (caller(1))[0] }
 
 =head2 droplets
 
+This will return an array reference of L<DigitalOcean::Droplet> objects.
+
+    my $droplets = $do->droplets;
+    
+    for my $droplet (@{$do->droplets}) { 
+        print $droplet->name . "\n";
+    }
+
 =cut
 
 sub droplets {
