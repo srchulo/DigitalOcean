@@ -97,24 +97,24 @@ our $VERSION = '0.01';
 
     my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
 
-	for my $droplet (@{$do->droplets}) { 
-		print "Droplet " . $droplet->name . " has id " . $droplet->id . "\n";
-	}
+    for my $droplet (@{$do->droplets}) { 
+        print "Droplet " . $droplet->name . " has id " . $droplet->id . "\n";
+    }
 
-	my $droplet = $do->droplet($droplet_id);
-	$droplet->reboot;
-	$droplet->power_off;
-	$droplet->power_on;
-	$droplet->destroy;
+    my $droplet = $do->droplet($droplet_id);
+    $droplet->reboot;
+    $droplet->power_off;
+    $droplet->power_on;
+    $droplet->destroy;
 
-	my $new_droplet = $do->create_droplet(
-					name => 'new_droplet',
-					size_id => $size_id,
-					image_id => $image_id,
-					region_id => $region_id,
-			);
+    my $new_droplet = $do->create_droplet(
+        name => 'new_droplet',
+        size_id => $size_id,
+        image_id => $image_id,
+        region_id => $region_id,
+    );
 
-	$new_droplet->enable_backups;
+    $new_droplet->enable_backups;
 
 =head1 SUBROUTINES/METHODS
 
