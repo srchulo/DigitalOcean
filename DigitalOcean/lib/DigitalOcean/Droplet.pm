@@ -1,6 +1,6 @@
 package DigitalOcean::Droplet;
 use strict;
-use Object::Tiny::XS qw /status name created_at region_id backups_active image_id id size_id ip_address DigitalOcean/;
+use Object::Tiny::RW::XS qw /status name created_at region_id backups_active image_id id size_id ip_address DigitalOcean/;
 use Method::Signatures::Simple;
 
 #use 5.006;
@@ -114,8 +114,11 @@ method disable_backups { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =cut
 
-#doesn't actually rename. fix that!
-method rename { $self->DigitalOcean->_external_request($self->id, @_) }
+method rename { 
+	my (%params) = @_;
+	$self->name($params{name});
+	return $self->DigitalOcean->_external_request($self->id, @_);
+}
 
 =head2 destroy
 
