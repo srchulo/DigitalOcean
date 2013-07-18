@@ -1,5 +1,12 @@
 Changes
 lib/DigitalOcean.pm
+lib/DigitalOcean/Domain/Record.pm
+lib/DigitalOcean/Domain.pm
+lib/DigitalOcean/Droplet.pm
+lib/DigitalOcean/Image.pm
+lib/DigitalOcean/Region.pm
+lib/DigitalOcean/Size.pm
+lib/DigitalOcean/SSH/Key.pm
 Makefile.PL
 MANIFEST			This list of files
 README
