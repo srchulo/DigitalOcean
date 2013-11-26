@@ -8,7 +8,7 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Domain::Record - Represents a Record object in the DigitalOcean API
 
 =head1 VERSION
 
@@ -20,19 +20,17 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $domain = $do->domain(56789);
+    my $record = $domain->record(98765);
 
-=head1 EXPORT
+    $record->edit(
+        record_type => 'A',
+        data => '196.87.89.45',
+    );
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    $record->destroy;
 
 =head1 SUBROUTINES/METHODS
 
@@ -42,12 +40,17 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =cut
 
+#make so it actually edits?
 method edit { 
 	$self->Domain->_request('record', $self->id . '/edit', @_);
 	return $self->DigitalOcean->_decode('DigitalOcean::Domain::Record');
 }
 
 =head2 destroy
+
+This method deletes the specified domain record.
+
+    $record->destroy;
 
 =cut
 
