@@ -93,6 +93,10 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
+This is a BETA release. I have not finished writing the documentation for all of the DigitalOcean objects yet,
+and I still have some tests to write. The current module is for the adventurous and daring to make use of as 
+they please!
+
     use DigitalOcean;
 
     my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
