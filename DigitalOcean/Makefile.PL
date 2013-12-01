@@ -24,6 +24,8 @@ WriteMakefile(
 	'LWP::UserAgent' => 0,
 	'LWP::Protocol::https' => 0,
 	'JSON::XS' => 0,
+	'Object::Tiny::RW::XS' => 0,
+	'Object::Tiny::XS' => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'DigitalOcean-*' },

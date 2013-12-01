@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
-0.01    Date/time
+0.02    November 1, 2013
+        added Object::Tiny::RW::XS and Object::Tiny::XS to preqreqs
+
+0.01    
         First version, released on an unsuspecting world. Beta release.
 

@@ -19,7 +19,7 @@
 #     MIN_PERL_VERSION => q[5.006]
 #     NAME => q[DigitalOcean]
 #     PL_FILES => {  }
-#     PREREQ_PM => { Test::More=>q[0], LWP::UserAgent=>q[0], Mouse=>q[0], LWP::Protocol::https=>q[0], JSON::XS=>q[0] }
+#     PREREQ_PM => { Test::More=>q[0], LWP::UserAgent=>q[0], Mouse=>q[0], LWP::Protocol::https=>q[0], Object::Tiny::RW::XS=>q[0], JSON::XS=>q[0], Object::Tiny::XS=>q[0] }
 #     VERSION_FROM => q[lib/DigitalOcean.pm]
 #     clean => { FILES=>q[DigitalOcean-*] }
 #     dist => { COMPRESS=>q[gzip -9f], SUFFIX=>q[gz] }
@@ -61,11 +61,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = DigitalOcean
 NAME_SYM = DigitalOcean
-VERSION = 0.01
+VERSION = 0.02
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_01
+VERSION_SYM = 0_02
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.01
+XS_VERSION = 0.02
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -287,7 +287,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = DigitalOcean
-DISTVNAME = DigitalOcean-0.01
+DISTVNAME = DigitalOcean-0.02
 
 
 # --- MakeMaker macro section:
@@ -545,8 +545,10 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  LWP::Protocol::https: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  LWP::UserAgent: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mouse: 0' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Object::Tiny::RW::XS: 0' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Object::Tiny::XS: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  perl: 5.006' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: 0.01' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: 0.02' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
 	$(NOECHO) $(ECHO) '{' > META_new.json
@@ -587,12 +589,14 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "LWP::Protocol::https" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "LWP::UserAgent" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mouse" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Object::Tiny::RW::XS" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Object::Tiny::XS" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "perl" : "5.006"' >> META_new.json
 	$(NOECHO) $(ECHO) '         }' >> META_new.json
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "0.01"' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "0.02"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
 
@@ -898,6 +902,8 @@ ppd :
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="LWP::Protocol::https" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="LWP::UserAgent" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mouse::" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Object::Tiny::RW::XS" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Object::Tiny::XS" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="darwin-thread-multi-2level-5.16" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    </IMPLEMENTATION>' >> $(DISTNAME).ppd

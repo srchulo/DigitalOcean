@@ -22,5 +22,7 @@ requires:
   LWP::Protocol::https: 0
   LWP::UserAgent: 0
   Mouse: 0
+  Object::Tiny::RW::XS: 0
+  Object::Tiny::XS: 0
   perl: 5.006
-version: 0.01
+version: 0.02

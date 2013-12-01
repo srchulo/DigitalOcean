@@ -1,6 +1,7 @@
 package DigitalOcean::Droplet;
 use strict;
-use Object::Tiny::RW::XS qw /status name created_at region_id backups_active image_id id size_id ip_address DigitalOcean/;
+use Object::Tiny::RW::XS qw /status name created_at region_id backups_active image_id id size_id ip_address private_ip_address DigitalOcean/;
+#added private_ip_address!
 use Method::Signatures::Simple;
 
 #use 5.006;
@@ -122,6 +123,7 @@ method rename { $self->DigitalOcean->_external_request($self->id, @_) }
 =cut
 
 method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
+#scrub data!
 
 =head1 AUTHOR
 
