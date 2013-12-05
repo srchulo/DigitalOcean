@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.03    December 5, 2013
+        added Method::Signatures::Simple to preqreqs
+
 0.02    November 1, 2013
         added Object::Tiny::RW::XS and Object::Tiny::XS to preqreqs
 
