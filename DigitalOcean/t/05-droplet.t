@@ -4,7 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 use Test::More;
 
-unless($ENV{API_KEY} and $ENV{CLIENT_ID} and $ENV{LOL}) {
+unless($ENV{API_KEY} and $ENV{CLIENT_ID}) {
 	plan skip_all => 'API_KEY and CLIENT_ID not set';
 }
 else {
