@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DigitalOcean 3"
-.TH DigitalOcean 3 "2013-12-05" "perl v5.16.2" "User Contributed Perl Documentation"
+.TH DigitalOcean 3 "2014-01-09" "perl v5.16.2" "User Contributed Perl Documentation"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -133,7 +133,7 @@
 DigitalOcean \- An OO interface to the DigitalOcean API.
 .SH "VERSION"
 .IX Header "VERSION"
-Version 0.01
+Version 0.04
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 This is a \s-1BETA\s0 release. I have not finished writing the documentation for all of the DigitalOcean objects yet,
@@ -190,6 +190,8 @@ This will create a new droplet and return a DigitalOcean::Droplet object. The pa
 \&\fBregion_id\fR Required, Numeric, this is the id of the region you would like your server in
 .IP "\(bu" 4
 \&\fBssh_key_ids\fR Optional, Numeric \s-1CSV\s0, comma separated list of ssh_key_ids that you would like to be added to the server
+.IP "\(bu" 4
+\&\fBprivate_networking\fR Optional, Boolean, enables a private network interface if the region supports private networking
 .PP
 .Vb 6
 \&    my $new_droplet = $do\->create_droplet(
@@ -298,9 +300,9 @@ This will create a new domain and return a DigitalOcean::Domain object. The para
 \&\fBip_address\fR Required, String, \s-1IP\s0 address for the domain's initial A record.
 .PP
 .Vb 4
-\&    my $new_ssh_key = $do\->create_ssh_key(
-\&        name => \*(Aqnew_ssh_key\*(Aq,
-\&        ssh_key_pub => $ssh_key_pub,
+\&    my $domain = $do\->create_domain(
+\&        name => \*(Aqexample.com\*(Aq,
+\&        ip_address => \*(Aq127.0.0.1\*(Aq,
 \&    );
 .Ve
 .SS "domain"
@@ -309,6 +311,13 @@ This will retrieve a domain by id and return a DigitalOcean::Domain object.
 .PP
 .Vb 1
 \&    my $domain = $do\->domain(56789);
+.Ve
+.SS "event"
+.IX Subsection "event"
+This will retrieve an event by id and return a DigitalOcean::Event object.
+.PP
+.Vb 1
+\&    my $event = $do\->event(56789);
 .Ve
 .SH "AUTHOR"
 .IX Header "AUTHOR"

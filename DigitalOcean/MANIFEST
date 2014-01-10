@@ -3,14 +3,22 @@ lib/DigitalOcean.pm
 lib/DigitalOcean/Domain/Record.pm
 lib/DigitalOcean/Domain.pm
 lib/DigitalOcean/Droplet.pm
+lib/DigitalOcean/Event.pm
 lib/DigitalOcean/Image.pm
 lib/DigitalOcean/Region.pm
 lib/DigitalOcean/Size.pm
 lib/DigitalOcean/SSH/Key.pm
+lib/DigitalOcean/Types.pm
 Makefile.PL
 MANIFEST			This list of files
 README
 t/00-load.t
-t/manifest.t
-t/pod-coverage.t
-t/pod.t
+01-droplets.t
+02-regions.t
+03-sizes.t
+04-images.t
+05-droplet.t
+06-image.t
+07-ssh_keys.t
+08-ssh_key.t
+09-domain.t

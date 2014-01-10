@@ -1,6 +1,7 @@
 package DigitalOcean;
 use strict;
 use Mouse;
+use DigitalOcean::Types qw (PositiveInt);
 use LWP::UserAgent;
 use LWP::Protocol::https;
 use JSON::XS;
@@ -10,6 +11,7 @@ use DigitalOcean::Size;
 use DigitalOcean::Image;
 use DigitalOcean::SSH::Key;
 use DigitalOcean::Domain;
+use DigitalOcean::Event;
 use DigitalOcean::Domain::Record;
 
 #use 5.006;
@@ -23,6 +25,20 @@ has 'ua' => (
     isa         => 'LWP::UserAgent', 
     required    => 0, 
 	default => sub { LWP::UserAgent->new },
+);
+
+has 'time_between_requests' => (
+	is => 'rw',
+	isa => PositiveInt,
+	default => 2,
+	required => 0,
+);
+
+has 'wait_on_events' => (
+	is => 'rw',
+	isa => 'Bool',
+	default => undef,
+	required => 0,
 );
 
 has 'api' => (
@@ -51,8 +67,8 @@ has 'request_append' => (
 
 has 'json_obj_key' => ( 
 	is => 'rw',
-	isa => 'Any',
-	default => undef,
+    isa => 'Any',
+    default => undef,
 );
 
 my %json_keys = ( 
@@ -69,11 +85,13 @@ my %json_keys = (
 	'DigitalOcean::domains' => 'domains',		
 	'DigitalOcean::create_domain' => 'domain',		
 	'DigitalOcean::domain' => 'domain',		
+	'DigitalOcean::event' => 'event',		
 	'DigitalOcean::_external_request' => 'event_id',		
 );
 
 my %ext_request = ( 
 	'DigitalOcean::Droplet' => 'droplets',		
+#	'DigitalOcean::Event' => 'events',		
 	'DigitalOcean::Image' => 'images',		
 	'DigitalOcean::SSH::Key' => 'ssh_keys',		
 	'DigitalOcean::Domain' => 'domains',		
@@ -85,11 +103,11 @@ DigitalOcean - An OO interface to the DigitalOcean API.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -127,6 +145,9 @@ they please!
 sub _request { 
 	my ($self, $path, $params) = @_;
 	
+	#see if we need to wait on this individual event
+	my $wait_on_event = delete $params->{wait_on_event};
+
 	$params->{client_id} = $self->client_id;
 	$params->{api_key} = $self->api_key;
 
@@ -142,27 +163,50 @@ sub _request {
 	my $response = $self->ua->request($req);
 
 	my $caller = $self->caller ? $self->caller : $self->_caller;
+	$self->caller(undef);
+
 	my $json = JSON::XS->new->utf8->decode ($response->content);
 	my $message = $json->{message} || $json->{error_message};
 	die "ERROR $message" if $json->{status} ne 'OK';
 
 	my $obj_key = $self->json_obj_key ? $self->json_obj_key : 
-				  $json_keys{$caller} ? $json_keys{$caller} : '';
-
-	$self->api_obj($json->{$obj_key});
-
-	$self->caller(undef);
+                  $json_keys{$caller} ? $json_keys{$caller} : '';
 	$self->json_obj_key(undef);
+
+	#convert all event_id's into Event objects
+	my $api_obj;
+	my $event_obj;
+
+	if($obj_key eq 'event_id' and exists $json->{$obj_key}) { 
+		$api_obj = $self->event($json->{$obj_key});
+		$event_obj = $api_obj;
+	}
+	else { 
+		$api_obj = $json->{$obj_key};
+
+		if(ref($json->{$obj_key}) eq 'HASH' and exists $json->{$obj_key}->{event_id}) {
+			$event_obj = $self->event($json->{$obj_key}->{event_id});
+		}
+	}
+
+	#if we have an event object, and we are supposed to return when the api call is complete then wait
+	if($event_obj and ($self->wait_on_events or $wait_on_event)) { 
+		$event_obj->wait;
+	}
+
+	$self->api_obj($api_obj);
 }
 
 sub _external_request { 
 	my ($self, $id, %params) = @_;
 	my $caller = $self->caller ? $self->caller : $self->_caller(1);
+
 	my $package = $self->_package;
 	$self->_request("$ext_request{$package}/$id/$caller/" . $self->request_append, \%params);
 	$self->request_append('');
-	$self->caller(undef);
-	return $self->api_obj;
+
+	my $api_obj = $self->api_obj;
+	return $api_obj;
 }
 
 sub _decode { 
@@ -243,6 +287,10 @@ B<region_id> Required, Numeric, this is the id of the region you would like your
 =item
 
 B<ssh_key_ids> Optional, Numeric CSV, comma separated list of ssh_key_ids that you would like to be added to the server
+
+=item
+
+B<private_networking> Optional, Boolean, enables a private network interface if the region supports private networking
 
 =back
 
@@ -446,9 +494,9 @@ B<ip_address> Required, String, IP address for the domain's initial A record.
 
 =back
 
-    my $new_ssh_key = $do->create_ssh_key(
-        name => 'new_ssh_key',
-        ssh_key_pub => $ssh_key_pub,
+    my $domain = $do->create_domain(
+        name => 'example.com',
+        ip_address => '127.0.0.1',
     );
 
 =cut
@@ -472,6 +520,21 @@ sub domain {
 
 	$self->_request("domains/$id");
 	return $self->_decode('DigitalOcean::Domain');
+}
+
+=head2 event
+
+This will retrieve an event by id and return a L<DigitalOcean::Event> object.
+
+    my $event = $do->event(56789);
+
+=cut
+
+sub event {
+	my ($self, $id) = @_;
+
+	$self->_request("events/$id");
+	return $self->_decode('DigitalOcean::Event');
 }
 
 =head1 AUTHOR

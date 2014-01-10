@@ -1,6 +1,6 @@
 package DigitalOcean::Domain::Record;
 use strict;
-use Object::Tiny::XS qw /id domain_id record_type name data priority port weight Domain DigitalOcean/;
+use Object::Tiny::RW::XS qw /id domain_id record_type name data priority port weight Domain DigitalOcean/;
 use Method::Signatures::Simple;
 
 #use 5.006;
@@ -16,7 +16,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -42,8 +42,14 @@ our $VERSION = '0.01';
 
 #make so it actually edits?
 method edit { 
-	$self->Domain->_request('record', $self->id . '/edit', @_);
-	return $self->DigitalOcean->_decode('DigitalOcean::Domain::Record');
+	$self->Domain->_record_request('record', $self->id . '/edit', @_);
+
+	my $obj = $self->DigitalOcean->api_obj;
+	for my $key (keys %{$obj}) { 
+		$self->$key($obj->{$key}) if $self->can($key);
+	}
+
+	return 1;
 }
 
 =head2 destroy

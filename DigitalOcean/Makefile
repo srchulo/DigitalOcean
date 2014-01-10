@@ -61,11 +61,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = DigitalOcean
 NAME_SYM = DigitalOcean
-VERSION = 0.03
+VERSION = 0.04
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_03
+VERSION_SYM = 0_04
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.03
+XS_VERSION = 0.04
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -169,6 +169,7 @@ MAN3PODS = lib/DigitalOcean.pm \
 	lib/DigitalOcean/Domain.pm \
 	lib/DigitalOcean/Domain/Record.pm \
 	lib/DigitalOcean/Droplet.pm \
+	lib/DigitalOcean/Event.pm \
 	lib/DigitalOcean/Image.pm \
 	lib/DigitalOcean/Region.pm \
 	lib/DigitalOcean/SSH/Key.pm \
@@ -198,15 +199,23 @@ TO_INST_PM = lib/DigitalOcean.pm \
 	lib/DigitalOcean/Domain.pm \
 	lib/DigitalOcean/Domain/Record.pm \
 	lib/DigitalOcean/Droplet.pm \
+	lib/DigitalOcean/Event.pm \
 	lib/DigitalOcean/Image.pm \
 	lib/DigitalOcean/Region.pm \
 	lib/DigitalOcean/SSH/Key.pm \
-	lib/DigitalOcean/Size.pm
+	lib/DigitalOcean/Size.pm \
+	lib/DigitalOcean/Types.pm \
+	test2.pl \
+	test3.pl
 
 PM_TO_BLIB = lib/DigitalOcean/Droplet.pm \
 	blib/lib/DigitalOcean/Droplet.pm \
+	test2.pl \
+	$(INST_LIB)/test2.pl \
 	lib/DigitalOcean/Domain/Record.pm \
 	blib/lib/DigitalOcean/Domain/Record.pm \
+	lib/DigitalOcean/Types.pm \
+	blib/lib/DigitalOcean/Types.pm \
 	lib/DigitalOcean/Size.pm \
 	blib/lib/DigitalOcean/Size.pm \
 	lib/DigitalOcean/Domain.pm \
@@ -217,6 +226,10 @@ PM_TO_BLIB = lib/DigitalOcean/Droplet.pm \
 	blib/lib/DigitalOcean.pm \
 	lib/DigitalOcean/SSH/Key.pm \
 	blib/lib/DigitalOcean/SSH/Key.pm \
+	test3.pl \
+	$(INST_LIB)/test3.pl \
+	lib/DigitalOcean/Event.pm \
+	blib/lib/DigitalOcean/Event.pm \
 	lib/DigitalOcean/Image.pm \
 	blib/lib/DigitalOcean/Image.pm
 
@@ -287,7 +300,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = DigitalOcean
-DISTVNAME = DigitalOcean-0.03
+DISTVNAME = DigitalOcean-0.04
 
 
 # --- MakeMaker macro section:
@@ -447,6 +460,7 @@ manifypods : pure_all  \
 	lib/DigitalOcean/Region.pm \
 	lib/DigitalOcean.pm \
 	lib/DigitalOcean/SSH/Key.pm \
+	lib/DigitalOcean/Event.pm \
 	lib/DigitalOcean/Image.pm
 	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) \
 	  lib/DigitalOcean/Droplet.pm $(INST_MAN3DIR)/DigitalOcean::Droplet.$(MAN3EXT) \
@@ -456,6 +470,7 @@ manifypods : pure_all  \
 	  lib/DigitalOcean/Region.pm $(INST_MAN3DIR)/DigitalOcean::Region.$(MAN3EXT) \
 	  lib/DigitalOcean.pm $(INST_MAN3DIR)/DigitalOcean.$(MAN3EXT) \
 	  lib/DigitalOcean/SSH/Key.pm $(INST_MAN3DIR)/DigitalOcean::SSH::Key.$(MAN3EXT) \
+	  lib/DigitalOcean/Event.pm $(INST_MAN3DIR)/DigitalOcean::Event.$(MAN3EXT) \
 	  lib/DigitalOcean/Image.pm $(INST_MAN3DIR)/DigitalOcean::Image.$(MAN3EXT) 
 
 
@@ -549,7 +564,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  Object::Tiny::RW::XS: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Object::Tiny::XS: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  perl: 5.006' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: 0.03' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: 0.04' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
 	$(NOECHO) $(ECHO) '{' > META_new.json
@@ -598,7 +613,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "0.03"' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "0.04"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
 
@@ -918,12 +933,16 @@ ppd :
 pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
 	  lib/DigitalOcean/Droplet.pm blib/lib/DigitalOcean/Droplet.pm \
+	  test2.pl $(INST_LIB)/test2.pl \
 	  lib/DigitalOcean/Domain/Record.pm blib/lib/DigitalOcean/Domain/Record.pm \
+	  lib/DigitalOcean/Types.pm blib/lib/DigitalOcean/Types.pm \
 	  lib/DigitalOcean/Size.pm blib/lib/DigitalOcean/Size.pm \
 	  lib/DigitalOcean/Domain.pm blib/lib/DigitalOcean/Domain.pm \
 	  lib/DigitalOcean/Region.pm blib/lib/DigitalOcean/Region.pm \
 	  lib/DigitalOcean.pm blib/lib/DigitalOcean.pm \
 	  lib/DigitalOcean/SSH/Key.pm blib/lib/DigitalOcean/SSH/Key.pm \
+	  test3.pl $(INST_LIB)/test3.pl \
+	  lib/DigitalOcean/Event.pm blib/lib/DigitalOcean/Event.pm \
 	  lib/DigitalOcean/Image.pm blib/lib/DigitalOcean/Image.pm 
 	$(NOECHO) $(TOUCH) pm_to_blib
 

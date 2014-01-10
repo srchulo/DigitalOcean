@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.04    January 10, 2014
+		added tests, added Event object, added wait_on_events and wait_on_event, added new attributes to objects that DO added
+
 0.03    December 5, 2013
         added Method::Signatures::Simple to preqreqs
 

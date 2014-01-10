@@ -26,4 +26,4 @@ requires:
   Object::Tiny::RW::XS: 0
   Object::Tiny::XS: 0
   perl: 5.006
-version: 0.03
+version: 0.04

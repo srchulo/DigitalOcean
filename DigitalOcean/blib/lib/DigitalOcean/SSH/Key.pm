@@ -1,6 +1,6 @@
 package DigitalOcean::SSH::Key;
 use strict;
-use Object::Tiny::XS qw /id name ssh_pub_key DigitalOcean/;
+use Object::Tiny::RW::XS qw /id name ssh_pub_key DigitalOcean/;
 use Method::Signatures::Simple;
 
 #use 5.006;
@@ -43,7 +43,11 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =cut
 
-method edit { $self->DigitalOcean->_external_request($self->id, @_) }
+method edit { 
+	my (%params) = @_;
+	$self->DigitalOcean->_external_request($self->id, @_);
+	$self->ssh_pub_key($params{ssh_pub_key});
+}
 
 =head2 destroy
 

@@ -123,43 +123,35 @@
 .rm #[ #] #H #V #F C
 .\" ========================================================================
 .\"
-.IX Title "DigitalOcean::Domain::Record 3"
-.TH DigitalOcean::Domain::Record 3 "2014-01-10" "perl v5.16.2" "User Contributed Perl Documentation"
+.IX Title "DigitalOcean::Event 3"
+.TH DigitalOcean::Event 3 "2014-01-06" "perl v5.16.2" "User Contributed Perl Documentation"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
 .nh
 .SH "NAME"
-DigitalOcean::Domain::Record \- Represents a Record object in the DigitalOcean API
+DigitalOcean \- An OO interface to the DigitalOcean API.
 .SH "VERSION"
 .IX Header "VERSION"
 Version 0.01
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
+Quick summary of what the module does.
+.PP
+Perhaps a little code snippet.
+.PP
 .Vb 1
 \&    use DigitalOcean;
 \&
-\&    my $domain = $do\->domain(56789);
-\&    my $record = $domain\->record(98765);
-\&
-\&    $record\->edit(
-\&        record_type => \*(AqA\*(Aq,
-\&        data => \*(Aq196.87.89.45\*(Aq,
-\&    );
-\&
-\&    $record\->destroy;
+\&    my $foo = DigitalOcean\->new();
+\&    ...
 .Ve
 .SH "SUBROUTINES/METHODS"
 .IX Header "SUBROUTINES/METHODS"
-.SS "edit"
-.IX Subsection "edit"
-.SS "destroy"
-.IX Subsection "destroy"
-This method deletes the specified domain record.
-.PP
-.Vb 1
-\&    $record\->destroy;
-.Ve
+.SS "complete"
+.IX Subsection "complete"
+.SS "wait"
+.IX Subsection "wait"
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 Adam Hopkins, \f(CW\*(C`<srchulo at cpan.org>\*(C'\fR

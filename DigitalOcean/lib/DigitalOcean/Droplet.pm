@@ -1,7 +1,6 @@
 package DigitalOcean::Droplet;
 use strict;
-use Object::Tiny::RW::XS qw /status name created_at region_id backups_active image_id id size_id ip_address private_ip_address DigitalOcean/;
-#added private_ip_address!
+use Object::Tiny::RW::XS qw /status name created_at region_id backups_active backups snapshots locked image_id id size_id ip_address private_ip_address DigitalOcean/;
 use Method::Signatures::Simple;
 
 #use 5.006;
@@ -17,7 +16,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -49,7 +48,7 @@ method reboot { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =cut
 
-method power_cycle { $self->DigialOcean->_external_request($self->id, @_) }
+method power_cycle { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 shutdown
 
@@ -79,13 +78,44 @@ method password_reset { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =cut
 
-method resize { $self->DigitalOcean->_external_request($self->id, @_) }
+#slow because we have to call shutdown first. Make not of this in documentation
+method resize { 
+	$self->DigitalOcean->_external_request($self->id, @_);
+}
+
+=head2 resize_reboot
+
+=cut
+
+#slow because we have to call shutdown first. Make not of this in documentation
+method resize_reboot { 
+	$self->power_off(wait_on_event => 1);
+	$self->resize(@_, wait_on_event => 1);
+	$self->power_on(wait_on_event => 1);
+}
 
 =head2 snapshot
 
 =cut
 
-method snapshot { $self->DigitalOcean->_external_request($self->id, @_) }
+method snapshot { 
+	my $event = $self->DigitalOcean->_external_request($self->id, @_);
+	#update droplets snapshots
+	my $temp_droplet = $self->DigitalOcean->droplet($self->id);
+	$self->snapshots($temp_droplet->snapshots);
+	return $event;
+}
+
+=head2 snapshot_reboot
+
+=cut
+
+method snapshot_reboot { 
+	$self->power_off(wait_on_event => 1);
+	my $event = $self->snapshot(@_, wait_on_event => 1);
+	$self->power_on(wait_on_event => 1);
+	return $event;
+}
 
 =head2 restore
 
@@ -116,7 +146,12 @@ method disable_backups { $self->DigitalOcean->_external_request($self->id, @_) }
 =cut
 
 #doesn't actually rename. fix that!
-method rename { $self->DigitalOcean->_external_request($self->id, @_) }
+method rename { 
+	my (%params) = @_;
+	my $event = $self->DigitalOcean->_external_request($self->id, @_);
+	$self->name($params{name});
+	return $event;
+}
 
 =head2 destroy
 

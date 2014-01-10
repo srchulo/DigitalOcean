@@ -1,6 +1,6 @@
-package DigitalOcean::SSH::Key;
+package DigitalOcean::Event;
 use strict;
-use Object::Tiny::RW::XS qw /id name ssh_pub_key DigitalOcean/;
+use Object::Tiny::RW::XS qw /id action_status droplet_id event_type_id percentage DigitalOcean/;
 use Method::Signatures::Simple;
 
 #use 5.006;
@@ -18,7 +18,6 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-
 =head1 SYNOPSIS
 
 Quick summary of what the module does.
@@ -30,30 +29,30 @@ Perhaps a little code snippet.
     my $foo = DigitalOcean->new();
     ...
 
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
 =head1 SUBROUTINES/METHODS
 
 =cut
 
-=head2 edit
+=head2 complete
 
 =cut
 
-method edit { 
-	my (%params) = @_;
-	$self->DigitalOcean->_external_request($self->id, @_);
-	$self->ssh_pub_key($params{ssh_pub_key});
+method complete { $self->percentage == 100 }
+
+=head2 wait
+
+=cut
+
+method wait { 
+	my $event = $self;
+
+	until($event->complete) { 
+		sleep($self->DigitalOcean->time_between_requests);
+		$event = $self->DigitalOcean->event($event->id);	
+	}
+
+	$self->percentage(100);
 }
-
-=head2 destroy
-
-=cut
-
-method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head1 AUTHOR
 
