@@ -159,7 +159,7 @@ sub _request {
 		$uri,
 	);
 
-	print "$uri\n";
+	#print "$uri\n";
 	my $response = $self->ua->request($req);
 
 	my $caller = $self->caller ? $self->caller : $self->_caller;
