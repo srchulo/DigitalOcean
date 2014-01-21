@@ -36,8 +36,8 @@
             "LWP::Protocol::https" : "0",
             "LWP::UserAgent" : "0",
             "Method::Signatures::Simple" : "0",
-            "MooseX::Types" : "0",
             "Mouse" : "0",
+            "MouseX::Types" : "0",
             "Object::Tiny::RW::XS" : "0",
             "Object::Tiny::XS" : "0",
             "perl" : "5.006"
@@ -45,5 +45,5 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.05"
+   "version" : "0.06"
 }

@@ -1,5 +1,11 @@
 Revision history for DigitalOcean
 
+0.06    January 20, 2014
+		Changed MooseX::Types dependency to MouseX::Types
+
+0.05    January 20, 2014
+		added documentation to all modules and add MooseX::Types dependency
+
 0.04    January 10, 2014
 		added tests, added Event object, added wait_on_events and wait_on_event, added new attributes to objects that DO added
 
