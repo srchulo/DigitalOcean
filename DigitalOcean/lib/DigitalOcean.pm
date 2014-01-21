@@ -103,11 +103,11 @@ DigitalOcean - An OO interface to the DigitalOcean API.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =head1 SYNOPSIS
 

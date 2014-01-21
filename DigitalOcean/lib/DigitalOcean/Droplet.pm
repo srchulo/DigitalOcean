@@ -12,11 +12,11 @@ DigitalOcean::Droplet - Represents a Droplet object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -30,7 +30,7 @@ our $VERSION = '0.03';
     $droplet->power_cycle;
 
     $droplet->power_off(wait_on_event => 1);
-    $droplet->snapshot(wait_on event => 1);
+    $droplet->snapshot(wait_on_event => 1);
     $droplet->power_on(wait_on_event => 1);
 
     #same as last three statements
