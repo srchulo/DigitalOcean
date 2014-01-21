@@ -8,43 +8,87 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Image - Represents an Image object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    my $image = $do->image(56789);
 
-=head1 EXPORT
+    $image->transfer(region_id => 6);
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    $image->destroy;
 
 =head1 SUBROUTINES/METHODS
+
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+name
+
+=item
+
+slug
+
+=item
+
+distribution
+
+=back
+
+Example use: 
+
+    my $image_id = $image->id;
+
+    my $image_name = $image->name;
+
+    my $slug = $image->slug;
 
 =cut
 
 =head2 destroy
+
+This method allows you to destroy an image. There is no way to restore a deleted image so be careful and ensure your data is properly backed up.
+
+    $image->destroy;
 
 =cut
 
 method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 transfer
+
+This method allows you to transfer an image to a specified region.
+
+=over 4
+
+=item
+
+B<region_id> Required, Numeric, this is the id of the region to which you would like to transfer.
+
+=back
+
+    $image->transfer(region_id => 6);
 
 =cut
 

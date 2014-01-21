@@ -7,40 +7,63 @@ use Object::Tiny::XS qw /id name slug DigitalOcean/;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Region - Represents a Region object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    my $regions = $do->regions;
 
-=head1 EXPORT
+    #first region
+    my $region = $regions->[0];
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    my $region_name = $region->name;
 
 =head1 SUBROUTINES/METHODS
 
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+name
+
+=item
+
+slug
+
+=back
+
+Example use: 
+
+    my $region_id = $region->id;
+
+    my $region_name = $region->name;
+
+    my $slug = $region->slug;
+
 =cut
 
-=head2 id
 
-=cut
 
 =head1 AUTHOR
 

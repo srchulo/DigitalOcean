@@ -8,37 +8,116 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Droplet - Represents a Droplet object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    my $droplet = $do->droplet(56789);
 
-=head1 EXPORT
+    $droplet->reboot;
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    $droplet->power_cycle;
+
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->snapshot(wait_on event => 1);
+    $droplet->power_on(wait_on_event => 1);
+
+    #same as last three statements
+    $droplet->snapshot_reboot;
 
 =head1 SUBROUTINES/METHODS
+
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+name
+
+=item
+
+image_id
+
+=item
+
+size_id
+
+=item
+
+region_id
+
+=item
+
+size_id
+
+=item
+
+backups_active
+
+=item
+
+backups
+
+=item
+
+snapshots
+
+=item
+
+ip_address
+
+=item
+
+private_ip_address
+
+=item
+
+locked
+
+=item
+
+status
+
+=back
+
+Example use: 
+
+    my $droplet_id = $droplet->id;
+
+    my $droplet_name = $droplet->name;
+
+    #returns an arrayref of backups associated with the droplet
+    my $backups = $droplet->backups;
+
+    #returns an arrayref of snapshots associated with the droplet
+    my $snapshots = $droplet->snapshots;
 
 =cut
 
 =head2 reboot
+
+This method allows you to reboot a droplet. This is the preferred method to use if a server is not responding.
+ 
+    $droplet->reboot;
 
 =cut
 
@@ -46,11 +125,19 @@ method reboot { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 power_cycle
 
+This method allows you to power cycle a droplet. This will turn off the droplet and then turn it back on.
+
+    $droplet->power_cycle;
+
 =cut
 
 method power_cycle { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 shutdown
+
+This method allows you to shutdown a running droplet. The droplet will remain in your account.
+
+    $droplet->shutdown;
 
 =cut
 
@@ -58,11 +145,19 @@ method shutdown { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 power_off
 
+This method allows you to poweroff a running droplet. The droplet will remain in your account.
+
+    $droplet->power_off;
+
 =cut
 
 method power_off { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 power_on
+
+This method allows you to poweron a powered off droplet.
+
+    $droplet->power_on;
 
 =cut
 
@@ -70,11 +165,37 @@ method power_on { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 password_reset
 
+This method will reset the root password for a droplet. Please be aware that this will reboot the droplet to allow resetting the password.
+
+    $droplet->password_reset;
+
 =cut
 
 method password_reset { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 resize
+
+This method allows you to resize a specific droplet to a different size. This will affect the number of processors and memory allocated to the droplet.
+
+=over 4
+
+=item
+
+B<size_id> Required, Numeric, this is the id of the size you would like the droplet to be resized to
+
+=back
+
+    $droplet->resize(size_id => 62);
+
+In order to resize your droplet, it must first be powered off, and you must wait for the droplet
+to be powered off before you can call resize on the droplet. Making the call accurately would look something like this:
+
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->resize(size_id => 62, wait_on_event => 1);
+    $droplet->power_on(wait_on_event => 1);
+
+If your droplet is already on and you essentially want to resize it and boot your droplet
+back up, you can call L<resize_reboot|/"resize_reboot"> to do the above code for you.
 
 =cut
 
@@ -85,9 +206,17 @@ method resize {
 
 =head2 resize_reboot
 
+If your droplet is already running, this method makes a call to L<resize|/"resize">
+for you and powers off your droplet, and then powers it on after it is done resizing
+and handles L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> to finish so you do not have to write this code.
+This is essentially the code that L<resize_reboot|/"resize_reboot"> performs for you:
+
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->resize(size_id => 62, wait_on_event => 1);
+    $droplet->power_on(wait_on_event => 1);
+
 =cut
 
-#slow because we have to call shutdown first. Make not of this in documentation
 method resize_reboot { 
 	$self->power_off(wait_on_event => 1);
 	$self->resize(@_, wait_on_event => 1);
@@ -95,6 +224,26 @@ method resize_reboot {
 }
 
 =head2 snapshot
+
+This method allows you to take a snapshot of the droplet once it has been powered off, which can later be restored or used to create a new droplet from the same image.
+
+=over 4
+
+=item
+
+B<name> Optional, String, this is the name of the new snapshot you want to create. If not set, the snapshot name will default to date/time
+
+=back
+
+In order to take a snapshot of your droplet, it must first be powered off, and you must wait for the droplet
+to be powered off before you can call snapshot on the droplet. Making the call accurately would look something like this:
+
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->snapshot(wait_on_event => 1);
+    $droplet->power_on(wait_on_event => 1);
+
+If your droplet is already on and you essentially want to take a snapshot and boot your droplet
+back up, you can call L<snapshot_reboot|/"snapshot_reboot"> to do the above code for you.
 
 =cut
 
@@ -108,6 +257,15 @@ method snapshot {
 
 =head2 snapshot_reboot
 
+If your droplet is already running, this method makes a call to L<snapshot|/"snapshot">
+for you and powers off your droplet, and then powers it on after it is done taking a snapshot
+and handles L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> to finish so you do not have to write this code.
+This is essentially the code that L<snapshot_reboot|/"snapshot_reboot"> performs for you:
+
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->snapshot(wait_on_event => 1);
+    $droplet->power_on(wait_on_event => 1);
+
 =cut
 
 method snapshot_reboot { 
@@ -119,11 +277,35 @@ method snapshot_reboot {
 
 =head2 restore
 
+This method allows you to restore a droplet with a previous image or snapshot. This will be a mirror copy of the image or snapshot to your droplet. Be sure you have backed up any necessary information prior to restore.
+
+=over 4
+
+=item
+
+B<image_id> Required, Numeric, this is the id of the image you would like to use to restore your droplet with
+
+=back
+
+    $droplet->restore(image_id => 56789);
+
 =cut
 
 method restore { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 rebuild
+
+This method allows you to reinstall a droplet with a default image. This is useful if you want to start again but retain the same IP address for your droplet.
+
+=over 4
+
+=item
+
+B<image_id> Required, Numeric, this is the id of the image you would like to use to restore your droplet with
+
+=back
+
+    $droplet->rebuild(image_id => 56789);
 
 =cut
 
@@ -131,11 +313,19 @@ method rebuild { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 enable_backups
 
+This method enables bakcups on your droplet.
+
+    $droplet->enable_backups;
+
 =cut
 
 method enable_backups { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 disable_backups
+
+This method disables bakcups on your droplet.
+
+    $droplet->disable_backups;
 
 =cut
 
@@ -143,9 +333,20 @@ method disable_backups { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head2 rename
 
+This method renames the droplet to the specified name. The new name is reflected in the droplet object.
+
+=over 4
+
+=item
+
+B<name> Required, String, new name of the droplet
+
+=back
+
+    $droplet->rename(name => 'my_new_droplet_name');
+
 =cut
 
-#doesn't actually rename. fix that!
 method rename { 
 	my (%params) = @_;
 	my $event = $self->DigitalOcean->_external_request($self->id, @_);
@@ -155,10 +356,13 @@ method rename {
 
 =head2 destroy
 
+This method destroys your droplet - this is irreversible.
+
+    $droplet->destroy;
+
 =cut
 
 method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
-#scrub data!
 
 =head1 AUTHOR
 

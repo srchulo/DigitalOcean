@@ -8,38 +8,92 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Event - Represents an Event object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+	my $event = $do->event(56789);
 
-    my $foo = DigitalOcean->new();
-    ...
+    #wait for event to finish
+    $event->wait;
 
 =head1 SUBROUTINES/METHODS
+
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+action_status
+
+=item
+
+droplet_id
+
+=item
+
+event_type_id
+
+=item
+
+percentage
+
+=back
+
+Example use: 
+
+    my $event_id = $event->id;
+
+    my $droplet_id = $event->droplet_id;
+
+    #get the percent that the event is complete out of 100
+    my $percentage = $event->percentage;
+
 
 =cut
 
 =head2 complete
+
+This method returns true if the event is complete, false if it is not.
+
+    if($event->complete) { 
+        #do something
+    }
 
 =cut
 
 method complete { $self->percentage == 100 }
 
 =head2 wait
+
+This method will wait for an event to complete and will not return until
+the event has completed. It is recommended to not use this directly, but
+rather to let L<DigitalOcean> call this for you (see L<WAITING ON EVENTS|DigitalOcean/"WAITING ON EVENTS">).
+
+    $event->wait;
+
+    #do stuff now that event is done.
+
+This method works by making requests to Digital Ocean's API to see if the event
+is complete yet. See L<TIME BETWEEN REQUESTS|DigitalOcean/"time_between_requests">.
 
 =cut
 

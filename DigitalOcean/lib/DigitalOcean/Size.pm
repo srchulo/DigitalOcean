@@ -7,38 +7,59 @@ use Object::Tiny::XS qw /id name slug DigitalOcean/;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Size - Represents a Size object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    my $sizes = $do->sizes;
 
-=head1 EXPORT
+    #first size
+    my $size = $sizes->[0];
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    my $size_name = $size->name;
 
 =head1 SUBROUTINES/METHODS
 
-=cut
+=cut 
+=head2 GETTERS
 
-=head2 id
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+name
+
+=item
+
+slug
+
+=back
+
+Example use: 
+
+    my $size_id = $size->id;
+
+    my $size_name = $size->name;
+
+    my $slug = $size->slug;
 
 =cut
 
@@ -127,7 +148,6 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 
 =cut
 

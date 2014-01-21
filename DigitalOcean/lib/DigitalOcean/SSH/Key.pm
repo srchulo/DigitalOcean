@@ -8,38 +8,74 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::SSH::Key - Represents an SSH Key object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    my $ssh_key = $do->ssh_key(56789);
 
-=head1 EXPORT
+    $ssh_key->edit(ssh_pub_key => $ssh_pub_key);
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    $ssh_key->destroy;
 
 =head1 SUBROUTINES/METHODS
+
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+name
+
+=item
+
+ssh_pub_key
+
+=back
+
+Example use: 
+
+    my $ssh_key_id = $ssh_key->id;
+
+    my $ssh_key_name = $ssh_key->name;
+
+    my $ssh_pub_key = $ssh_key->ssh_pub_key;
 
 =cut
 
 =head2 edit
+
+This method allows you to modify an existing public SSH key in your account.
+
+=over 4
+
+=item
+
+B<ssh_pub_key> Required, String, the new public SSH key.
+
+=back
+
+    $ssh_key->edit(ssh_pub_key => $ssh_pub_key); 
 
 =cut
 
@@ -50,6 +86,10 @@ method edit {
 }
 
 =head2 destroy
+
+This method will delete the SSH key from your account.
+
+    $ssh_key->destroy;
 
 =cut
 

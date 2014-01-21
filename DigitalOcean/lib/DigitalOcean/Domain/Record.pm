@@ -8,20 +8,21 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean::Domain::Record - Represents a Record object in the DigitalOcean API
+DigitalOcean::Domain::Record - Represents a Record object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
     use DigitalOcean;
 
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
     my $domain = $do->domain(56789);
     my $record = $domain->record(98765);
 
@@ -34,13 +35,97 @@ our $VERSION = '0.02';
 
 =head1 SUBROUTINES/METHODS
 
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+domain_id
+
+=item
+
+record_type
+
+=item
+
+name
+
+=item
+
+data
+
+=item
+
+priority
+
+=item
+
+port
+
+=item
+
+weight
+
+=back
+
+Example use: 
+
+    my $record_id = $record->id;
+
+    my $domain_id = $record->domain_id;
+
+    my $record_type = $record->record_type;
+
 =cut
 
 =head2 edit
 
+This method edits an existing domain record. It updates the L<DigitalOcean::Domain::Record> object
+to reflect the changes.
+
+=over 4
+
+=item 
+
+B<record_type> Required, String, the type of record you would like to create. 'A', 'CNAME', 'NS', 'TXT', 'MX' or 'SRV'.
+
+=item
+
+B<data> Required, String, this is the value of the record.
+
+=item
+
+B<name> Optional, String, required for 'A', 'CNAME', 'TXT' and 'SRV' records.
+
+=item
+
+B<priority> Optional, Integer, required for 'SRV' and 'MX' records.
+
+=item
+
+B<port> Optional, Integer, required for 'SRV' records.
+
+=item
+
+B<weight> Optional, Integer, required for 'SRV' records.
+
+=back
+
+    $record->edit(
+        record_type => 'A',
+        data => '196.87.89.45',
+    );
+
 =cut
 
-#make so it actually edits?
 method edit { 
 	$self->Domain->_record_request('record', $self->id . '/edit', @_);
 
@@ -74,9 +159,6 @@ Adam Hopkins, C<< <srchulo at cpan.org> >>
 Please report any bugs or feature requests to C<bug-webservice-digitalocean at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DigitalOcean>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 

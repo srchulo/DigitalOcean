@@ -8,33 +8,77 @@ use Method::Signatures::Simple;
 
 =head1 NAME
 
-DigitalOcean - An OO interface to the DigitalOcean API.
+DigitalOcean::Domain - Represents a Domain object in the L<DigitalOcean> API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
     use DigitalOcean;
 
-    my $foo = DigitalOcean->new();
-    ...
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    my $domain = $do->domain(56789);
 
-=head1 EXPORT
+    my $record = $domain->create_record(
+        record_type => 'A',
+        data => '196.87.89.45',
+    );
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    #get arrayref of records associated with this domain
+    my $records = $domain->records;
 
+    $domain->destroy;
+ 
 =head1 SUBROUTINES/METHODS
+
+=cut 
+=head2 GETTERS
+
+Below is a list of getters that will return the information as set by Digital Ocean.
+
+=over 4
+
+=item
+
+id
+
+=item
+
+name
+
+=item
+
+ttl
+
+=item
+
+live_zone_file
+
+=item
+
+error
+
+=item
+
+zone_file_with_error
+
+=back
+
+Example use: 
+
+    my $domain_id = $domain->id;
+
+    my $domain_name = $domain->name;
+
+    my $ttl = $domain->ttl;
+
+
 
 =cut
 
@@ -45,13 +89,16 @@ method _record_request($json_obj_key, $request_append, @args) {
 	$self->DigitalOcean->_external_request($self->id, @args);
 }
 
-=head2 destroy
-
-=cut
-
-method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
-
 =head2 records
+
+This method returns an array refference of L<DigitalOcean::Domain::Record> objects
+associated with this domain.
+
+    my $records = $domain->records;
+
+    for my $record (@{$records}) { 
+        print $record->name . "\n";
+    }
 
 =cut
 
@@ -62,6 +109,41 @@ method records {
 
 =head2 create_record
 
+This will create a new record associated with this domain. Returns a L<DigitalOcean::Domain::Record> object.
+
+=over 4
+
+=item 
+
+B<record_type> Required, String, the type of record you would like to create. 'A', 'CNAME', 'NS', 'TXT', 'MX' or 'SRV'
+
+=item
+
+B<data> Required, String, this is the value of the record.
+
+=item
+
+B<name> Optional, String, required for 'A', 'CNAME', 'TXT' and 'SRV' records.
+
+=item
+
+B<priority> Optional, Integer, required for 'SRV' and 'MX' records.
+
+=item
+
+B<port> Optional, Integer, required for 'SRV' records.
+
+=item
+
+B<weight> Optional, Integer, required for 'SRV' records.
+
+=back
+
+    my $record = $domain->create_record(
+        record_type => 'A',
+        data => '196.87.89.45',
+    );
+
 =cut
 
 method create_record { 
@@ -71,6 +153,10 @@ method create_record {
 
 =head2 record
 
+This will retrieve a record by id and return a L<DigitalOcean::Domain::Record> object.
+
+    my $record = $domain->record(56789);
+
 =cut
 
 method record($id) { 
@@ -78,6 +164,16 @@ method record($id) {
 	$self->DigitalOcean->api_obj->{Domain} = $self;
 	return $self->DigitalOcean->_decode('DigitalOcean::Domain::Record');
 }
+
+=head2 destroy
+
+This method deletes the specified domain.
+
+    $domain->destroy;
+
+=cut
+
+method destroy { $self->DigitalOcean->_external_request($self->id, @_) }
 
 =head1 AUTHOR
 

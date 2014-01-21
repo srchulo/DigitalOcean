@@ -27,6 +27,7 @@ WriteMakefile(
 	'Object::Tiny::RW::XS' => 0,
 	'Object::Tiny::XS' => 0,
 	'Method::Signatures::Simple' => 0,
+	'MooseX::Types' => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'DigitalOcean-*' },

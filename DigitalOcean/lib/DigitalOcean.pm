@@ -103,21 +103,20 @@ DigitalOcean - An OO interface to the DigitalOcean API.
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
-This is a BETA release. I have not finished writing the documentation for all of the DigitalOcean objects yet,
-and I still have some tests to write. The current module is for the adventurous and daring to make use of as 
-they please!
+This module is an object oriented interface into the Digital Ocean API.
 
     use DigitalOcean;
 
-    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key);
+    #for more efficient use, remove "wait_on_events => 1". See WAITING ON EVENTS section for more info
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key, wait_on_events => 1);
 
     for my $droplet (@{$do->droplets}) { 
         print "Droplet " . $droplet->name . " has id " . $droplet->id . "\n";
@@ -137,6 +136,99 @@ they please!
     );
 
     $new_droplet->enable_backups;
+
+=head1 HOW THIS MODULE IS WRITTEN
+
+This module is written to be flexible, so that if changes are made to the Digital Ocean API,
+then I don't have to update this module every time they make changes so that this module will
+still work. What I mean by this is that if Digital Ocean adds new parameters that need to be
+passed into their calls, these parameters can be passed into the current calls even if I don't
+specify them as options and it should still work. For example, say that for the L<create_droplet|/"create_droplet">
+call Digital Ocean adds a new required parameter "timestamp". All you would have to do is pass in timestamp:
+
+    $do->create_droplet(
+        name => 'new_droplet',
+        size_id => $size_id,
+        image_id => $image_id,
+        region_id => $region_id,
+        timestamp => $timestamp,
+    );
+
+And timestamp will be added to the request call with the other parameters. However, if Digital Ocean adds
+any new attributes to an object, such as droplet_type for L<DigitalOcean::Droplet>, this I will have
+to add to the L<DigitalOcean::Droplet> in order for the L<DigitalOcean::Droplet> objects to respect
+this new attribute. If you see that Digital Ocean has added a new attribute that I do not have in one
+of my objects, please let me know in L<bugs|http://rt.cpan.org/NoAuth/Bugs.html?Dist=DigitalOcean>.
+
+
+=head1 WAITING ON EVENTS
+
+=head2 wait_on_events
+
+For some calls in Digital Ocean's API, you need to wait for one call to finish before you can
+submit another request that depends on the first call. For instance, if you resize a droplet
+and then want to take a snapshot of the droplet, you must wait until the action of resizing
+the droplet is complete before you can take the snapshot of this droplet. If you set wait_on_events
+to 1, then L<DigitalOcean> will wait on every event until it is complete, so this way you do not have to worry 
+about the synchronization of events or if you need to wait between two events. However,
+turning wait_on_events on for every event can also cause your script to run much slower if you do not need
+to be waiting on every event.
+
+You may wait on all events by passing in wait_on_events when you create the L<DigitalOcean> object:
+
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key, wait_on_events => 1);
+
+Or you can toggle it after you have created the L<DigitalOcean> object:
+
+    $do->wait_on_events(1);
+    $do->wait_on_events(undef);
+
+The default for wait_on_events is that it is set to undef and does not wait on events.
+
+=head2 wait_on_event
+
+A more efficient solution is to only wait on indiviudal events that you have to wait on. You can pass in the
+wait_on_event flag to any subroutine (this includes subroutines in L<DigitalOcean>'s sub modules, such as
+L<DigitalOcean::Droplet>) and L<DigitalOcean> will wait until that call is complete before returning.
+
+    my $droplet = $do->create_droplet(
+        name => 'new_droplet',
+        size_id => $size_id,
+        image_id => $image_id,
+        region_id => $region_id,
+        wait_on_event => 1,
+    );
+
+    $droplet->reboot(wait_on_event => 1);
+    $droplet->snapshot(wait_on_event => 1);
+
+    my $domain = $do->domain(56789);
+    my $record = $domain->record(98765);
+
+    $record->edit(
+        record_type => 'A',
+        data => '196.87.89.45',
+        wait_on_event => 1,
+    );
+
+    etc.
+
+L<DigitalOcean> uses L<DigitalOcean::Event's wait|DigitalOcean::Event/"wait"> subroutine to wait on events.
+
+=head2 time_between_requests
+
+L<DigitalOcean> uses L<DigitalOcean::Event's wait|DigitalOcean::Event/"wait"> subroutine to wait on events. It does
+this by making requests to Digital Ocean until the L<event|DigitalOcean::Event> is complete. You can use time_between_requests
+to determine how long L<DigitalOcean> waits between requests before making another request to Digital Ocean to see if an event is
+done. You can use it like so:
+
+    $do->time_between_requests(1);
+
+or
+
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key, time_between_requests => 1);
+
+An integer value must be passed in. The default is 2.
 
 =head1 SUBROUTINES/METHODS
 
