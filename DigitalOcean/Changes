@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.08    January 26, 2014
+		Fixed documentation error in DigitalOcean::Droplet and DigitalOcean. Updated _decode_many function to use map.
+
 0.07    January 21, 2014
 		Fixed documentation error in DigitalOcean::Droplet
 

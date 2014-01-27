@@ -1,5 +1,5 @@
 ---
-abstract: 'An OO interface to the DigitalOcean API.'
+abstract: 'An OO interface to the Digital Ocean API.'
 author:
   - 'Adam Hopkins <srchulo@cpan.org>'
 build_requires:
@@ -27,4 +27,4 @@ requires:
   Object::Tiny::RW::XS: 0
   Object::Tiny::XS: 0
   perl: 5.006
-version: 0.07
+version: 0.08
