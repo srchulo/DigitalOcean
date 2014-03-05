@@ -103,11 +103,11 @@ DigitalOcean - An OO interface to the Digital Ocean API.
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 =head1 SYNOPSIS
 
@@ -513,13 +513,13 @@ B<name> Required, String, the name you want to give this SSH key.
 
 =item
 
-B<ssh_key_pub> Required, String, the actual public SSH key.
+B<ssh_pub_key> Required, String, the actual public SSH key.
 
 =back
 
     my $new_ssh_key = $do->create_ssh_key(
         name => 'new_ssh_key',
-        ssh_key_pub => $ssh_key_pub,
+        ssh_pub_key => $ssh_pub_key,
     );
 
 =cut

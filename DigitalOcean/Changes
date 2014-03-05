@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.09    March 5, 2014
+		Fixed documentation error in DigitalOcean where ssh_pub_key was ssh_key_pub
+
 0.08    January 26, 2014
 		Fixed documentation error in DigitalOcean::Droplet and DigitalOcean. Updated _decode_many function to use map.
 
