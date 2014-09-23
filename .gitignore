@@ -1,3 +1,9 @@
+/DigitalOcean/MYMETA.*
+/DigitalOcean/MANIFEST.bak
+/DigitalOcean/pm_to_blib
+/DigitalOcean/blib/
+/DigitalOcean/Makefile
+/DigitalOcean/DigitalOcean-*
 
 DigitalOcean/test.pl
 
