@@ -1,9 +1,18 @@
+/DigitalOcean/META.*
 /DigitalOcean/MYMETA.*
 /DigitalOcean/MANIFEST.bak
 /DigitalOcean/pm_to_blib
 /DigitalOcean/blib/
 /DigitalOcean/Makefile
+/DigitalOcean/Makefile.old
 /DigitalOcean/DigitalOcean-*
+/DigitalOcean/MANIFEST
+/DigitalOcean/Build
+/DigitalOcean/Build.bat
+/DigitalOcean/.build/
+/DigitalOcean/_build/
+/DigitalOcean/cover_db/
+/DigitalOcean/inc/
 
 DigitalOcean/test.pl
 
