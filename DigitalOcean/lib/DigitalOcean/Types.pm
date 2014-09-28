@@ -14,5 +14,12 @@ subtype PositiveInt,
     as Int, 
     where { $_ > 0 },
     message { "Int is not larger than 0" };
+
+=head1 NAME
+
+DigitalOcean::Types - Some types
+
+=cut
+
   
 1;
