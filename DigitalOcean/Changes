@@ -1,5 +1,17 @@
 Revision history for DigitalOcean
 
+0.13    October 7, 2014
+		skip pod-coverage tests that failed and add pod to module that missed it
+
+0.12    September 23, 2014
+		Removed test.pl
+
+0.11    September 23, 2014
+		Fixed missing MANIFEST file issue
+
+0.10    September 22, 2014
+		Added github links
+
 0.09    March 5, 2014
 		Fixed documentation error in DigitalOcean where ssh_pub_key was ssh_key_pub
 
