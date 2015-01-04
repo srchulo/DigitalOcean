@@ -137,10 +137,10 @@ This module is an object oriented interface into the Digital Ocean API.
 
     $new_droplet->enable_backups;
 
-=head2 Getting an API Key
+=head2 API Key
 
 This module uses version 1 of the Digital::Ocean API, so you will need to generate an API v1
-key to use it. The access tokens used by new the API will not work.
+key to use it. The access tokens used by the new API will not work.
 
 =head1 HOW THIS MODULE IS WRITTEN
 
