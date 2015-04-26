@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.14    April 26, 2015
+		Made DigitalOcean::Domain::Record::destroy work
+
 0.13    October 7, 2014
 		skip pod-coverage tests that failed and add pod to module that missed it
 
