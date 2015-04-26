@@ -146,7 +146,7 @@ This method deletes the specified domain record.
 =cut
 
 method destroy { 
-	$self->Domain->_request('', $self->id . '/destroy');
+	$self->Domain->_record_request('', $self->id . '/destroy');
 	return 1;
 }
 
