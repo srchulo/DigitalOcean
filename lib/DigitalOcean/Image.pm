@@ -46,6 +46,11 @@ has regions => (
     coerce => 1,
 );
 
+has created_at => ( 
+    is => 'ro',
+    isa => 'Str',
+);
+
 has min_disk_size => ( 
     is => 'ro',
     isa => 'Num',

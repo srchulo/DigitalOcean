@@ -109,6 +109,31 @@ has die_pretty => (
     default => 1, 
 );
 
+=method last_response
+
+This method returns the last L<DigitalOcean::Response> from the most recent API request. This contains useful information about
+the request, such as the L<DigitalOcean::Response's status_code|DigitalOcean::Response/"status_code"> or the L<DigitalOcean::Meta> object.
+It returns undef if no API requests have been made yet. 
+
+    my $last_response = $do->last_response;
+
+    my $status_code = $do->status_code;
+    print "Status code from last response $status_code\n";
+
+    my $status_message = $do->status_message;
+    print "Status message from last response $status_message\n";
+
+    my $total = $do->meta->total;
+    print "Total objects returned in last response $total\n";
+
+=cut
+
+has last_response => (
+    is => 'rw',
+    isa => 'Undef|DigitalOcean::Response',
+    default => undef,
+);
+
 sub _request { 
     my ($self, $req_method, $path, $params, $req_body) = @_;
     
@@ -165,6 +190,8 @@ sub _request {
 
     #add meta object if one was passed back
     $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
+
+    $self->last_response($do_response);
 
     return $do_response;
 }

@@ -49,6 +49,14 @@ my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299
 
 
 my $droplets = $do->droplets;
+
+for my $droplet (@$droplets) { 
+    print $droplet->name . "\n";
+    print "\tcreated at: " . $droplet->image->created_at . "\n";
+}
+
+print "LR TOTAL: " . $do->last_response->meta->total . "\n";
+
 exit;
 
 my $droplet = $do->droplet(207673);
