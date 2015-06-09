@@ -27,6 +27,11 @@ has meta => (
     isa => 'DigitalOcean::Meta',
 );
 
+has links => (
+    is => 'rw',
+    isa => 'DigitalOcean::Links',
+);
+
 #ABSTRACT: Represents an HTTP error returned by the DigitalOcean API
 
 =head1 SYNOPSIS

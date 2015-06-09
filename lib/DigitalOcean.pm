@@ -5,6 +5,7 @@ use Mouse;
 use DigitalOcean::Response;
 use DigitalOcean::Droplet;
 use DigitalOcean::Meta;
+use DigitalOcean::Links;
 
 #for requesting
 use LWP::UserAgent;
@@ -190,6 +191,9 @@ sub _request {
 
     #add meta object if one was passed back
     $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
+
+    #add links object if one was passed back
+    $do_response->links(DigitalOcean::Links->new(%{$json->{links}})) if $json->{links};
 
     $self->last_response($do_response);
 

@@ -38,5 +38,15 @@ coerce 'Coerced::DigitalOcean::Networks'
     => from 'HashRef'
     => via { DigitalOcean::Networks->new( %{$_} ) };
 
+subtype 'Coerced::DigitalOcean::Links' => as class_type('DigitalOcean::Links');
+coerce 'Coerced::DigitalOcean::Links'
+    => from 'HashRef'
+    => via { DigitalOcean::Links->new( %{$_} ) };
+
+subtype 'Coerced::DigitalOcean::Pages' => as class_type('DigitalOcean::Pages');
+coerce 'Coerced::DigitalOcean::Pages'
+    => from 'HashRef'
+    => via { DigitalOcean::Pages->new( %{$_} ) };
+
 no Mouse::Util::TypeConstraints;
 1;
