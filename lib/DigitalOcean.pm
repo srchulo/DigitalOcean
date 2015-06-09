@@ -135,11 +135,33 @@ has last_response => (
     default => undef,
 );
 
+=method per_page
+
+This method can force pagination to a certain value instead of the default value of 25 when requesting collections.
+
+    #now 2 items will be returned per page for collections
+    $do->per_page(2);
+
+The default is undef, which just means that the Digital Ocean API's default will be used.
+
+=cut
+
+has per_page => (
+    is => 'rw',
+    isa =>'Undef|Int',
+    default => undef,
+);
+
 sub _request { 
     my ($self, $req_method, $path, $params, $req_body) = @_;
     
     #create request
     my $uri = URI->new($self->api . $path);
+
+    if(defined $self->per_page) { 
+        $params->{per_page} = $self->per_page;
+    }
+
     $uri->query_form($params);
 
     my $req = HTTP::Request->new(

@@ -7,6 +7,7 @@ use DigitalOcean::Kernel;
 use DigitalOcean::NextBackupWindow;
 use DigitalOcean::Networks;
 use DigitalOcean::Network;
+use DigitalOcean::Pages;
 
 subtype 'Coerced::DigitalOcean::Region' => as class_type('DigitalOcean::Region');
 coerce 'Coerced::DigitalOcean::Region'
