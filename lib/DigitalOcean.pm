@@ -4,6 +4,7 @@ use Mouse;
 
 use DigitalOcean::Response;
 use DigitalOcean::Droplet;
+use DigitalOcean::Meta;
 
 #for requesting
 use LWP::UserAgent;
@@ -142,10 +143,9 @@ sub _request {
             status_code => $response->code,
             status_message => $response->message,
             status_line => $response->status_line,
-            DigitalOcean => $self,
         );
 
-        die $self->die_pretty ? Data::Dumper->Dump([$do_error]) : $do_error;
+        die $self->die_pretty ? Data::Dumper->Dump([$do_error, $self]) : $do_error;
     }
 
 
@@ -156,13 +156,17 @@ sub _request {
 
     #do something with meta and links?
 
-    DigitalOcean::Response->new(
+    my $do_response = DigitalOcean::Response->new(
         json => $json,
         status_code => $response->code,
         status_message => $response->message,
         status_line => $response->status_line,
-        DigitalOcean => $self,     
     );
+
+    #add meta object if one was passed back
+    $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
+
+    return $do_response;
 }
 
 sub _GET { 
@@ -172,15 +176,15 @@ sub _GET {
 }
 
 sub _decode { 
-    my ($self, $type, $key, $json) = @_;
-    my $attrs = $json->{$key};
+    my ($self, $type, $json, $key) = @_;
+    my $attrs = $key ? $json->{$key} : $json;
     $attrs->{DigitalOcean} = $self;
     return $type->new($attrs);
 }
 
 sub _decode_many { 
-#   my ($self, $type, $key, $json) = @_;
-#    [map { $self->_decode($type, $_) } @{$self->api_obj}];
+    my ($self, $type, $arr) = @_;
+    [map { $self->_decode($type, $_) } @{$arr}];
 }
 
 =method droplet
@@ -195,11 +199,31 @@ sub droplet {
     my ($self, $id) = @_;
 
     my $do_response = $self->_GET("droplets/$id");
-    my $droplet = $self->_decode('DigitalOcean::Droplet', 'droplet', $do_response->json);
+    my $droplet = $self->_decode('DigitalOcean::Droplet', $do_response->json, 'droplet');
 
     $droplet->image->DigitalOcean($self);
 
     return $droplet;
+}
+
+=head2 droplets
+ 
+This will return an array reference of L<DigitalOcean::Droplet> objects.
+ 
+    my $droplets = $do->droplets;
+     
+    for my $droplet (@{$droplets}) { 
+        print $droplet->name . "\n";
+    }
+ 
+=cut
+
+sub droplets {
+    my ($self, $id) = @_;
+
+    my $do_response = $self->_GET("droplets");
+
+    return $self->_decode_many('DigitalOcean::Droplet', $do_response->json->{droplets});
 }
 
 __PACKAGE__->meta->make_immutable();

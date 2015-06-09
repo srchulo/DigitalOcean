@@ -1,6 +1,31 @@
 use strict;
 package DigitalOcean::Response;
-use Object::Tiny::XS qw /json status_code status_message status_line DigitalOcean/;
+use Mouse;
+
+has json => ( 
+    is => 'ro',
+    isa => 'Any',
+);
+
+has status_code => (
+    is => 'rw',
+    isa => 'Num',
+);
+
+has status_message => (
+    is => 'rw',
+    isa => 'Str',
+);
+
+has status_line => (
+    is => 'rw',
+    isa => 'Str',
+);
+
+has meta => (
+    is => 'rw',
+    isa => 'DigitalOcean::Meta',
+);
 
 #ABSTRACT: Represents an HTTP error returned by the DigitalOcean API
 
