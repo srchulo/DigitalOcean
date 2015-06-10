@@ -46,17 +46,18 @@ print $net->v4->[0]->gateway;
 exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
-#$do->per_page(2);
-    my $account = $do->get_user_information;
+$do->per_page(300);
 
-    print "Droplet limit: " . $account->droplet_limit . "\n";
-    print "Email: " . $account->email . "\n";
-    print "uuid: " . $account->uuid . "\n";
-    print "Email Verified: " . $account->email_verified . "\n";
+    my $actions_collection = $do->actions;
+    my $obj;
+
+    while($obj = $actions_collection->next) { 
+        print $obj->id . "\n";
+    }
+
 exit;
 
-
-my $droplets_collection = $do->droplets;
+my $droplets_collection = $do->droplets(3);
 print "$droplets_collection\n";
 
 print $droplets_collection->total . "\n";

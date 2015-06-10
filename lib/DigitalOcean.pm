@@ -8,6 +8,7 @@ use DigitalOcean::Meta;
 use DigitalOcean::Links;
 use DigitalOcean::Collection;
 use DigitalOcean::Account;
+use DigitalOcean::Action;
 
 #for requesting
 use LWP::UserAgent;
@@ -203,7 +204,7 @@ sub _request {
     #TEMPORARY
     my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
     my $pretty_printed_unencoded = $coder->encode ($json);
-    #print "$pretty_printed_unencoded\n";
+    print "$pretty_printed_unencoded\n";
 
     #die with DigitalOcean::Error
     if($response->code < 200 or $response->code >= 300) {
@@ -285,6 +286,51 @@ sub get_user_information {
     return $self->_decode('DigitalOcean::Account', $do_response->json, 'account');
 }
 
+sub _get_collection { 
+    my ($self, $path, $type_name, $json_key, $per_page) = @_;
+
+    my $do_response = $self->_GET(path => $path, per_page => $per_page);
+
+    return DigitalOcean::Collection->new (
+        DigitalOcean => $self,
+        type_name => $type_name,
+        json_key => $json_key,
+        per_page => $per_page,
+        response => $do_response,
+    );
+}
+
+=method actions
+ 
+This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the actions collection. 
+ 
+    my $actions_collection = $do->actions;
+    my $obj;
+
+    while($obj = $actions_collection->next) { 
+        print $obj->id . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $actions_collection = $do->actions(2);
+    my $obj;
+
+    while($obj = $actions_collection->next) { 
+        print $obj->id . "\n";
+    }
+ 
+=cut
+
+sub actions {
+    my ($self, $per_page) = @_;
+    return $self->_get_collection('actions', 'DigitalOcean::Action', 'actions', $per_page);
+}
+
 =method droplet
 
 This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
@@ -304,14 +350,14 @@ sub droplet {
     return $droplet;
 }
 
-=head2 droplets
+=method droplets
  
-This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the collection. 
+This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the droplets collection. 
  
     my $droplets_collection = $do->droplets;
     my $obj;
 
-    while($obj = $droplets_collection) { 
+    while($obj = $droplets_collection->next) { 
         print $obj->name . "\n";
     }
 
@@ -324,7 +370,7 @@ If you would like a different C<per_page> value to be used for this collection i
     my $droplets_collection = $do->droplets(2);
     my $obj;
 
-    while($obj = $droplets_collection) { 
+    while($obj = $droplets_collection->next) { 
         print $obj->name . "\n";
     }
  
@@ -332,19 +378,7 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub droplets {
     my ($self, $per_page) = @_;
-    my ($type_name, $json_key) = ('DigitalOcean::Droplet', 'droplets');
-
-    my $do_response = $self->_GET(path => "droplets", per_page => $per_page);
-
-    my $do_collection = DigitalOcean::Collection->new (
-        DigitalOcean => $self,
-        type_name => $type_name,
-        json_key => $json_key,
-        per_page => $per_page,
-        response => $do_response,
-    );
-
-    return $do_collection;
+    return $self->_get_collection('droplets', 'DigitalOcean::Droplet', 'droplets', $per_page);
 }
 
 __PACKAGE__->meta->make_immutable();

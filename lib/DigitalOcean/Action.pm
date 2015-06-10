@@ -1,6 +1,7 @@
 use strict;
 package DigitalOcean::Action;
 use Mouse;
+use DigitalOcean::Types;
 
 #ABSTRACT: Represents an Action object in the DigitalOcean API
 
@@ -56,7 +57,7 @@ A time value given in ISO8601 combined date and time format that represents when
 
 has completed_at => ( 
     is => 'ro',
-    isa => 'Str',
+    isa => 'Str|Undef',
 );
 
 =method resource_id
@@ -67,7 +68,7 @@ A unique identifier for the resource that the action is associated with.
 
 has resource_id => ( 
     is => 'ro',
-    isa => 'Num',
+    isa => 'Num|Undef',
 );
 
 =method resource_type
@@ -83,13 +84,14 @@ has resource_type => (
 
 =method region
 
-(deprecated) A slug representing the region where the action occurred.
+Returns a L<DigitalOcean::Region> object.
 
 =cut
 
 has region => ( 
-    is => 'ro',
-    isa => 'Undef|Str',
+    is => 'rw',
+    isa => 'Coerced::DigitalOcean::Region|Undef',
+    coerce => 1,
 );
 
 =method region_slug
