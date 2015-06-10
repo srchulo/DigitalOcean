@@ -43,13 +43,31 @@ has api => (
     required => 0,
 );
 
+=method ratelimit_limit
+
+Returns the number of requests that can be made per hour. See L<here|https://developers.digitalocean.com/documentation/v2/#rate-limit> for more details.
+
+=cut
+
 has ratelimit_limit => (
     is => 'rw',
 );
 
+=method ratelimit_remaining
+
+Returns the number of requests that remain before you hit your request limit. See L<here|https://developers.digitalocean.com/documentation/v2/#rate-limit> for more details.
+
+=cut
+
 has ratelimit_remaining => (
     is => 'rw',
 );
+
+=method ratelimit_reset
+
+This returns the time when the oldest request will expire. The value is given in Unix epoch time. See L<here|https://developers.digitalocean.com/documentation/v2/#rate-limit> for more details.
+
+=cut
 
 has ratelimit_reset => (
     is => 'rw',
@@ -204,9 +222,10 @@ sub _request {
     #print Data::Dumper->Dump([$json]);
     #print "\n";
 
-    #parse ratelimit vars
-
-    #do something with meta and links?
+    #parse ratelimit headers
+    $self->ratelimit_limit($response->header('RateLimit-Limit'));
+    $self->ratelimit_remaining($response->header('RateLimit-Remaining'));
+    $self->ratelimit_reset($response->header('RateLimit-Reset'));
 
     my $do_response = DigitalOcean::Response->new(
         json => $json,

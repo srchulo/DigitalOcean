@@ -63,6 +63,10 @@ while($next = $droplets_collection->next) {
 
 print "LR TOTAL: " . $do->last_response->meta->total . "\n";
 
+print "rl limit " . $do->ratelimit_limit . "\n";
+print "rl remaining " . $do->ratelimit_remaining . "\n";
+print "rl reset " . $do->ratelimit_reset . "\n";
+
 exit;
 
 my $droplet = $do->droplet(207673);
