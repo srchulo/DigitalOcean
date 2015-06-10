@@ -4,6 +4,11 @@ use Mouse;
 
 #ABSTRACT: Represents a Domain object in the DigitalOcean API
 
+has DigitalOcean => (
+    is => 'rw',
+    isa => 'DigitalOcean',
+);
+
 =method name
 
 The name of the domain itself. This should follow the standard domain format of domain.TLD. For instance, example.com is a valid domain name.
@@ -36,6 +41,19 @@ has zone_file => (
     is => 'ro',
     isa => 'Str|Undef',
 );
+
+=method delete
+
+This deletes the domain from your account. This will return 1 on success and undef on failure.
+
+=cut
+
+sub delete { 
+    my ($self) = @_;
+    my $do_response = $self->DigitalOcean->_DELETE(path => 'domains/' . $self->name);
+
+    return $do_response->status_code == 204;
+}
 
 =head1 SYNOPSIS
  

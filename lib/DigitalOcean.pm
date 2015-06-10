@@ -208,34 +208,29 @@ sub _request {
     }
 
     my $response = $self->ua->request($req);
-    my $json = JSON::XS->new->utf8->decode($response->content);
+    my $json;
+    if($response->content) {
+        $json = JSON::XS->new->utf8->decode($response->content);
 
-    #TEMPORARY
-    my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
-    my $pretty_printed_unencoded = $coder->encode ($json);
-    print "$pretty_printed_unencoded\n";
+        #TEMPORARY
+        my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+        my $pretty_printed_unencoded = $coder->encode ($json);
+        print "$pretty_printed_unencoded\n";
 
-    #die with DigitalOcean::Error
-    if($response->code < 200 or $response->code >= 300) {
-        my $do_error = DigitalOcean::Error->new(
-            id => $json->{id},
-            message => $json->{message},
-            status_code => $response->code,
-            status_message => $response->message,
-            status_line => $response->status_line,
-        );
+        #die with DigitalOcean::Error
+        if($response->code < 200 or $response->code >= 300) {
+            my $do_error = DigitalOcean::Error->new(
+                id => $json->{id},
+                message => $json->{message},
+                status_code => $response->code,
+                status_message => $response->message,
+                status_line => $response->status_line,
+            );
 
-        die $self->die_pretty ? Data::Dumper->Dump([$do_error, $self]) : $do_error;
+            die $self->die_pretty ? Data::Dumper->Dump([$do_error, $self]) : $do_error;
+        }
+
     }
-
-
-    #print Data::Dumper->Dump([$json]);
-    #print "\n";
-
-    #parse ratelimit headers
-    $self->ratelimit_limit($response->header('RateLimit-Limit'));
-    $self->ratelimit_remaining($response->header('RateLimit-Remaining'));
-    $self->ratelimit_reset($response->header('RateLimit-Reset'));
 
     my $do_response = DigitalOcean::Response->new(
         json => $json,
@@ -244,13 +239,20 @@ sub _request {
         status_line => $response->status_line,
     );
 
-    #add meta object if one was passed back
-    $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
+    if($json) {
+        #add meta object if one was passed back
+        $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
 
-    #add links object if one was passed back
-    $do_response->links(DigitalOcean::Links->new(%{$json->{links}})) if $json->{links};
+        #add links object if one was passed back
+        $do_response->links(DigitalOcean::Links->new(%{$json->{links}})) if $json->{links};
+    }
 
     $self->last_response($do_response);
+
+    #parse ratelimit headers
+    $self->ratelimit_limit($response->header('RateLimit-Limit'));
+    $self->ratelimit_remaining($response->header('RateLimit-Remaining'));
+    $self->ratelimit_reset($response->header('RateLimit-Reset'));
 
     return $do_response;
 }
@@ -267,6 +269,14 @@ sub _POST {
     my $self = shift;
     my (%args) = @_;
     $args{req_method} = POST;
+
+    return $self->_request(%args);
+}
+
+sub _DELETE { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{req_method} = DELETE;
 
     return $self->_request(%args);
 }
@@ -436,7 +446,10 @@ sub create_domain {
     my $self = shift;
     my %args = @_;
 
-    return $self->_create('domains', 'DigitalOcean::Domain', 'domain', \%args);
+    my $domain = $self->_create('domains', 'DigitalOcean::Domain', 'domain', \%args);
+    $domain->DigitalOcean($self);
+
+    return $domain;
 }
 
 =method domain
@@ -450,7 +463,10 @@ This will retrieve a domain by name and return a L<DigitalOcean::Domain> object.
 sub domain {
     my ($self, $id) = @_;
 
-    return $self->_get_object("domains/$id", 'DigitalOcean::Domain', 'domain');
+    my $domain = $self->_get_object("domains/$id", 'DigitalOcean::Domain', 'domain');
+    $domain->DigitalOcean($self);
+
+    return $domain;
 }
 
 =method droplet
