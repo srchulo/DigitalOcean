@@ -174,14 +174,13 @@ has per_page => (
 sub _request { 
     my $self = shift;
     my (%args) = @_;
-    my ($req_method, $path, $params, $req_body) = ($args{req_method}, $args{path}, $args{params}, $args{req_body});
+    my ($req_method, $path, $params, $req_body, $per_page) = ($args{req_method}, $args{path}, $args{params}, $args{req_body}, $args{per_page});
     
     #create request
     my $uri = URI->new($self->api . $path);
 
-    if(defined $self->per_page) { 
-        $params->{per_page} = $self->per_page;
-    }
+    $params->{per_page} = $per_page ? $per_page : $self->per_page;
+    delete $params->{per_page} unless $params->{per_page}; #only put in url if a value was stored
 
     $uri->query_form($params);
     print "REQUESTING " . $uri->as_string . "\n";
@@ -286,21 +285,35 @@ sub droplet {
 
 =head2 droplets
  
-This will return an array reference of L<DigitalOcean::Droplet> objects.
+This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the collection. 
  
-    my $droplets = $do->droplets;
-     
-    for my $droplet (@{$droplets}) { 
-        print $droplet->name . "\n";
+    my $droplets_collection = $do->droplets;
+    my $obj;
+
+    while($obj = $droplets_collection) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $droplets_collection = $do->droplets(2);
+    my $obj;
+
+    while($obj = $droplets_collection) { 
+        print $obj->name . "\n";
     }
  
 =cut
 
 sub droplets {
-    my ($self, $id, $per_page) = @_;
+    my ($self, $per_page) = @_;
     my ($type_name, $json_key) = ('DigitalOcean::Droplet', 'droplets');
 
-    my $do_response = $self->_GET(path => "droplets");
+    my $do_response = $self->_GET(path => "droplets", per_page => $per_page);
 
     my $do_collection = DigitalOcean::Collection->new (
         DigitalOcean => $self,

@@ -142,10 +142,12 @@ sub _update {
     #get returned objects
     $self->objects($self->DigitalOcean->_decode_many($self->type_name, $self->response->json->{$self->json_key}));
 
-    $self->pages($self->response->links->pages);
+    if($self->response->links and $self->response->links->pages) {
+        $self->pages($self->response->links->pages);
+    }
 
     #only if last page was returned
-    if($self->pages->last) {
+    if($self->pages and $self->pages->last) {
         my ($path, $last_page) = $self->_get_path_and_page($self->pages->last);
 
         $self->last_page($last_page);
