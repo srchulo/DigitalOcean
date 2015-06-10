@@ -6,6 +6,7 @@ use DigitalOcean::Response;
 use DigitalOcean::Droplet;
 use DigitalOcean::Meta;
 use DigitalOcean::Links;
+use DigitalOcean::Collection;
 
 #for requesting
 use LWP::UserAgent;
@@ -153,7 +154,9 @@ has per_page => (
 );
 
 sub _request { 
-    my ($self, $req_method, $path, $params, $req_body) = @_;
+    my $self = shift;
+    my (%args) = @_;
+    my ($req_method, $path, $params, $req_body) = ($args{req_method}, $args{path}, $args{params}, $args{req_body});
     
     #create request
     my $uri = URI->new($self->api . $path);
@@ -163,6 +166,7 @@ sub _request {
     }
 
     $uri->query_form($params);
+    print "REQUESTING " . $uri->as_string . "\n";
 
     my $req = HTTP::Request->new(
         $req_method,
@@ -181,7 +185,7 @@ sub _request {
     #TEMPORARY
     my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
     my $pretty_printed_unencoded = $coder->encode ($json);
-    print "$pretty_printed_unencoded\n";
+    #print "$pretty_printed_unencoded\n";
 
     #die with DigitalOcean::Error
     if($response->code < 200 or $response->code >= 300) {
@@ -197,8 +201,8 @@ sub _request {
     }
 
 
-    print Data::Dumper->Dump([$json]);
-    print "\n";
+    #print Data::Dumper->Dump([$json]);
+    #print "\n";
 
     #parse ratelimit vars
 
@@ -223,9 +227,11 @@ sub _request {
 }
 
 sub _GET { 
-    my ($self, $path) = @_;
+    my $self = shift;
+    my (%args) = @_;
+    $args{req_method} = GET;
 
-    return $self->_request(GET, $path);
+    return $self->_request(%args);
 }
 
 sub _decode { 
@@ -251,7 +257,7 @@ This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
 sub droplet {
     my ($self, $id) = @_;
 
-    my $do_response = $self->_GET("droplets/$id");
+    my $do_response = $self->_GET(path => "droplets/$id");
     my $droplet = $self->_decode('DigitalOcean::Droplet', $do_response->json, 'droplet');
 
     $droplet->image->DigitalOcean($self);
@@ -272,11 +278,20 @@ This will return an array reference of L<DigitalOcean::Droplet> objects.
 =cut
 
 sub droplets {
-    my ($self, $id) = @_;
+    my ($self, $id, $per_page) = @_;
+    my ($type_name, $json_key) = ('DigitalOcean::Droplet', 'droplets');
 
-    my $do_response = $self->_GET("droplets");
+    my $do_response = $self->_GET(path => "droplets");
 
-    return $self->_decode_many('DigitalOcean::Droplet', $do_response->json->{droplets});
+    my $do_collection = DigitalOcean::Collection->new (
+        DigitalOcean => $self,
+        type_name => $type_name,
+        json_key => $json_key,
+        per_page => $per_page,
+        response => $do_response,
+    );
+
+    return $do_collection;
 }
 
 __PACKAGE__->meta->make_immutable();

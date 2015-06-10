@@ -49,12 +49,17 @@ my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299
 $do->per_page(1);
 
 
-my $droplets = $do->droplets;
+my $droplets_collection = $do->droplets;
+print "$droplets_collection\n";
 
-for my $droplet (@$droplets) { 
-    print $droplet->name . "\n";
-    print "\tcreated at: " . $droplet->image->created_at . "\n";
+print $droplets_collection->total . "\n";
+
+my $next;
+while($next = $droplets_collection->next) { 
+    print $next->name . "\n";
+    print "  " . $next->id . "\n";
 }
+
 
 print "LR TOTAL: " . $do->last_response->meta->total . "\n";
 
