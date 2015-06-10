@@ -23,7 +23,7 @@ This value is the time to live for the records on this domain, in seconds. This 
 
 has ttl => ( 
     is => 'ro',
-    isa => 'Num',
+    isa => 'Num|Undef',
 );
 
 =method zone_file
@@ -34,7 +34,7 @@ This attribute contains the complete contents of the zone file for the selected 
 
 has zone_file => ( 
     is => 'ro',
-    isa => 'Str',
+    isa => 'Str|Undef',
 );
 
 =head1 SYNOPSIS

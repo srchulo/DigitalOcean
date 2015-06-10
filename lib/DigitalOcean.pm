@@ -9,6 +9,7 @@ use DigitalOcean::Links;
 use DigitalOcean::Collection;
 use DigitalOcean::Account;
 use DigitalOcean::Action;
+use DigitalOcean::Domain;
 
 #for requesting
 use LWP::UserAgent;
@@ -176,7 +177,7 @@ has per_page => (
 sub _request { 
     my $self = shift;
     my (%args) = @_;
-    my ($req_method, $path, $params, $req_body, $per_page) = ($args{req_method}, $args{path}, $args{params}, $args{req_body}, $args{per_page});
+    my ($req_method, $path, $params, $req_body_hash, $per_page) = ($args{req_method}, $args{path}, $args{params}, $args{req_body_hash}, $args{per_page});
     
     #create request
     my $uri = URI->new($self->api . $path);
@@ -196,7 +197,15 @@ sub _request {
     $req->header(Authorization => 'Bearer ' . $self->oauth_token);
 
     #set body content
-    $req->content($req_body);
+    if($req_body_hash) {
+        #set json header
+        $req->header('Content-Type' => 'application/json');
+
+        #put json in body
+        my $json_coder = JSON::XS->new->ascii->allow_nonref;
+        my $req_body = $json_coder->encode($req_body_hash);
+        $req->content($req_body);
+    }
 
     my $response = $self->ua->request($req);
     my $json = JSON::XS->new->utf8->decode($response->content);
@@ -254,6 +263,14 @@ sub _GET {
     return $self->_request(%args);
 }
 
+sub _POST { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{req_method} = POST;
+
+    return $self->_request(%args);
+}
+
 sub _decode { 
     my ($self, $type, $json, $key) = @_;
     my $attrs = $key ? $json->{$key} : $json;
@@ -307,9 +324,16 @@ sub _get_object {
     return $self->_decode($type_name, $do_response->json, $json_key);
 }
 
+sub _create { 
+    my ($self, $path, $type_name, $json_key, $req_body_hash) = @_;
+
+    my $do_response = $self->_POST(path => $path, req_body_hash => $req_body_hash);
+    return $self->_decode($type_name, $do_response->json, $json_key);
+}
+
 =method actions
  
-This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the actions collection. 
+This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Action> objects of the actions collection. 
  
     my $actions_collection = $do->actions;
     my $obj;
@@ -352,6 +376,69 @@ sub action {
     return $self->_get_object("actions/$id", 'DigitalOcean::Action', 'action');
 }
 
+=method domains
+ 
+This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Domain> objects of the domains collection. 
+ 
+    my $domains_collection = $do->domains;
+    my $obj;
+
+    while($obj = $domains_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $domains_collection = $do->domains(2);
+    my $obj;
+
+    while($obj = $domains_collection->next) { 
+        print $obj->name . "\n";
+    }
+ 
+=cut
+
+sub domains {
+    my ($self, $per_page) = @_;
+    return $self->_get_collection('domains', 'DigitalOcean::Domain', 'domains', $per_page);
+}
+
+=method create_domain
+ 
+This will create a new domain and return a L<DigitalOcean::Domain> object. The parameters are:
+ 
+=over 4
+ 
+=item 
+ 
+B<name> Required, String, The domain name to add to the DigitalOcean DNS management interface. The name must be unique in DigitalOcean's DNS system. The request will fail if the name has already been taken.
+ 
+=item
+ 
+B<ip_address> Required, String, This attribute contains the IP address you want the domain to point to.
+ 
+=back
+ 
+    my $domain = $do->create_domain(
+        name => 'example.com',
+        ip_address => '127.0.0.1',
+    );
+
+Keep in mind that, upon creation, the zone_file field will have a value of null until a zone file is generated and propagated through an automatic process on the DigitalOcean servers.
+ 
+=cut
+ 
+sub create_domain {
+    my $self = shift;
+    my %args = @_;
+
+    return $self->_create('domains', 'DigitalOcean::Domain', 'domain', \%args);
+}
+
 =method droplet
 
 This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
@@ -371,7 +458,7 @@ sub droplet {
 
 =method droplets
  
-This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the droplets collection. 
+This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Droplet> objects of the droplets collection. 
  
     my $droplets_collection = $do->droplets;
     my $obj;
