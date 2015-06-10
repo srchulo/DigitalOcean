@@ -7,6 +7,7 @@ use DigitalOcean::Droplet;
 use DigitalOcean::Meta;
 use DigitalOcean::Links;
 use DigitalOcean::Collection;
+use DigitalOcean::Account;
 
 #for requesting
 use LWP::UserAgent;
@@ -262,6 +263,26 @@ sub _decode {
 sub _decode_many { 
     my ($self, $type, $arr) = @_;
     [map { $self->_decode($type, $_) } @{$arr}];
+}
+
+=method get_user_information
+
+Returns a L<DigitalOcean::Account> object.
+
+    my $account = $do->get_user_information;
+
+    print "Droplet limit: " . $account->droplet_limit . "\n";
+    print "Email: " . $account->email . "\n";
+    print "uuid: " . $account->uuid . "\n";
+    print "Email Verified: " . $account->email_verified . "\n";
+
+=cut
+
+sub get_user_information {
+    my ($self) = @_;
+
+    my $do_response = $self->_GET(path => "account");
+    return $self->_decode('DigitalOcean::Account', $do_response->json, 'account');
 }
 
 =method droplet
