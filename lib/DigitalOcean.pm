@@ -300,6 +300,13 @@ sub _get_collection {
     );
 }
 
+sub _get_object { 
+    my ($self, $path, $type_name, $json_key) = @_;
+
+    my $do_response = $self->_GET(path => $path);
+    return $self->_decode($type_name, $do_response->json, $json_key);
+}
+
 =method actions
  
 This will return L<DigitalOcean::Collection> that can be used to iterate through the objects of the actions collection. 
@@ -331,6 +338,20 @@ sub actions {
     return $self->_get_collection('actions', 'DigitalOcean::Action', 'actions', $per_page);
 }
 
+=method action
+
+This will retrieve an action by id and return a L<DigitalOcean::Action> object.
+
+    my $action = $do->action(56789);
+
+=cut
+
+sub action {
+    my ($self, $id) = @_;
+
+    return $self->_get_object("actions/$id", 'DigitalOcean::Action', 'action');
+}
+
 =method droplet
 
 This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
@@ -342,9 +363,7 @@ This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
 sub droplet {
     my ($self, $id) = @_;
 
-    my $do_response = $self->_GET(path => "droplets/$id");
-    my $droplet = $self->_decode('DigitalOcean::Droplet', $do_response->json, 'droplet');
-
+    my $droplet = $self->_get_object("droplets/$id", 'DigitalOcean::Droplet', 'droplet');
     $droplet->image->DigitalOcean($self);
 
     return $droplet;

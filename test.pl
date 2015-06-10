@@ -46,6 +46,18 @@ print $net->v4->[0]->gateway;
 exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
+ my $action = $do->action(2266714);
+ print "ID " . $action->id . "\n";
+ print "status " . $action->status . "\n";
+ print "type " . $action->type . "\n";
+ print "started_at " . $action->started_at . "\n";
+ print "completed_at " . $action->completed_at . "\n";
+ print "resource id " . $action->resource_id . "\n";
+ print "resource_type " . $action->resource_type . "\n";
+ print "region " . $action->region->name . "\n";
+ print "region_slug " . $action->region_slug . "\n";
+ exit;
+
 $do->per_page(300);
 
     my $actions_collection = $do->actions;
