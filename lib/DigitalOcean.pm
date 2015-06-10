@@ -439,6 +439,20 @@ sub create_domain {
     return $self->_create('domains', 'DigitalOcean::Domain', 'domain', \%args);
 }
 
+=method domain
+ 
+This will retrieve a domain by name and return a L<DigitalOcean::Domain> object.
+ 
+    my $domain = $do->domain('example.com');
+     
+=cut
+
+sub domain {
+    my ($self, $id) = @_;
+
+    return $self->_get_object("domains/$id", 'DigitalOcean::Domain', 'domain');
+}
+
 =method droplet
 
 This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.
