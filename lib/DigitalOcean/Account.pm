@@ -37,7 +37,7 @@ has uuid => (
     isa => 'Str',
 );
 
-=method
+=method email_verified
 
 If true, the user has verified their account via email. False otherwise.
 
