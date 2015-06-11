@@ -43,6 +43,17 @@ has zone_file => (
     isa => 'Str|Undef',
 );
 
+has path => (
+    is => 'rw',
+    isa => 'Str',
+);
+
+sub BUILD { 
+    my ($self) = @_;
+    
+    $self->path('domains/' . $self->name . '/records'); 
+}
+
 =method records
  
 This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Domain::Record> objects of the records collection that is associated with this domain. 
@@ -71,9 +82,59 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub records {
     my ($self, $per_page) = @_;
-    return $self->DigitalOcean->_get_collection('domains/' . $self->name . '/records', 'DigitalOcean::Domain::Record', 'domain_records', $per_page);
+    return $self->DigitalOcean->_get_collection($self->path, 'DigitalOcean::Domain::Record', 'domain_records', $per_page);
 }
 
+
+=method create_record
+ 
+This will create a new record associated with this domain. Returns a L<DigitalOcean::Domain::Record> object.
+ 
+=over 4
+ 
+=item 
+ 
+B<type> Required (All Records), String, The record type (A, MX, CNAME, etc).
+ 
+=item
+ 
+B<name> Required (A, AAAA, CNAME, TXT, SRV), String, The host name, alias, or service being defined by the record.
+ 
+=item
+ 
+B<data> Required (A, AAAA, CNAME, MX, TXT, SRV, NS), String, Variable data depending on record type. See the [Domain Records]() section for more detail on each record type.
+ 
+=item
+ 
+B<priority> Optional, Number, The priority of the host (for SRV and MX records. null otherwise).
+ 
+=item
+ 
+B<port> Optional, Number, The port that the service is accessible on (for SRV records only. null otherwise).
+ 
+=item
+ 
+B<weight> Optional, Number, The weight of records with the same priority (for SRV records only. null otherwise).
+ 
+=back
+ 
+    my $record = $domain->create_record(
+        type => 'A',
+        name => 'test',
+        data => '196.87.89.45',
+    );
+ 
+=cut
+
+sub create_record {
+    my $self = shift;
+    my %args = @_;
+
+    my $record = $self->DigitalOcean->_create($self->path, 'DigitalOcean::Domain::Record', 'domain_record', \%args);
+    $record->DigitalOcean($self->DigitalOcean);
+
+    return $record;
+}
 
 =method delete
 

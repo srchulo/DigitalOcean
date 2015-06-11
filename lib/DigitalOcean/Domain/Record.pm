@@ -81,7 +81,7 @@ The weight for SRV records.
 
 =cut
 
-has port => ( 
+has weight => ( 
     is => 'ro',
     isa => 'Num|Undef',
 );
