@@ -136,6 +136,23 @@ sub create_record {
     return $record;
 }
 
+=method record
+ 
+This will retrieve a record by id and return a L<DigitalOcean::Domain::Record> object.
+ 
+    my $record = $domain->record(56789);
+ 
+=cut
+
+sub record {
+    my ($self, $id) = @_;
+
+    my $record = $self->DigitalOcean->_get_object($self->path . "/$id", 'DigitalOcean::Domain::Record', 'domain_record');
+    $record->DigitalOcean($self->DigitalOcean);
+
+    return $record;
+}
+
 =method delete
 
 This deletes the domain from your account. This will return 1 on success and undef on failure.

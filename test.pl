@@ -49,12 +49,15 @@ my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299
 
 my $domain = $do->domain('srchulo.com');
 
-    my $record = $domain->create_record(
-        type => 'A',
-        name => 'test',
-        data => '196.87.89.45',
-    );
+#    my $record = $domain->create_record(
+#        type => 'A',
+#        name => 'test',
+#        data => '196.87.89.45',
+#    );
 
+my $record = $domain->record(7096051);
+
+print 'id ' . $record->id . "\n";
 print 'type ' . $record->type . "\n";
 print 'name ' . $record->name . "\n";
 print 'data ' . $record->data . "\n";
