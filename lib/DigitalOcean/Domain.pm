@@ -168,9 +168,7 @@ This deletes the domain from your account. This will return 1 on success and und
 
 sub delete { 
     my ($self) = @_;
-    my $do_response = $self->DigitalOcean->_DELETE(path => 'domains/' . $self->name);
-
-    return $do_response->status_code == 204;
+    return $self->DigitalOcean->_delete(path => 'domains/' . $self->name);
 }
 
 =head1 SYNOPSIS

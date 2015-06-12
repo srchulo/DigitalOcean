@@ -47,9 +47,13 @@ exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
-my $domain = $do->domain('srchulo.com');
-my $record = $domain->record(7110018);
+my $domain = $do->domain('hey.com');
 
+my $true = $domain->delete;
+print "$true\n";
+exit;
+
+my $record;
 print 'id ' . $record->id . "\n";
 print 'type ' . $record->type . "\n";
 print 'name ' . $record->name . "\n";
@@ -57,6 +61,11 @@ print 'data ' . $record->data . "\n";
 print 'priority ' . $record->priority . "\n";
 print 'port ' . $record->port . "\n";
 print 'weight ' . $record->weight . "\n";
+
+my $true = $record->delete;
+
+print "$true\n";
+exit;
 
             $record = $record->update(
                         type => 'A',

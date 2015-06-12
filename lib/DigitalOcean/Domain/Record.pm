@@ -152,15 +152,13 @@ sub update {
 
 =method delete
 
-This deletes the domain from your account. This will return 1 on success and undef on failure.
+This deletes the record for the associated domain from your account. This will return 1 on success and undef on failure.
 
 =cut
 
 sub delete { 
     my ($self) = @_;
-    my $do_response = $self->DigitalOcean->_DELETE(path => 'domains/' . $self->name);
-
-    return $do_response->status_code == 204;
+    return $self->DigitalOcean->_delete(path => $self->path);
 }
 
 =head1 SYNOPSIS

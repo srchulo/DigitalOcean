@@ -357,6 +357,14 @@ sub _create {
     return $self->_decode($type_name, $do_response->json, $json_key);
 }
 
+sub _delete { 
+    my $self = shift;
+    my (%args) = @_;
+    my $do_response = $self->_DELETE(%args);
+
+    return $do_response->status_code == 204;
+}
+
 =method actions
  
 This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Action> objects of the actions collection. 
