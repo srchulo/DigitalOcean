@@ -121,6 +121,30 @@ has total => (
     isa => 'Int',
 );
 
+=method init_objects
+
+This should be set when creating the L<DigitalOcean::Collection>. The format is
+
+    ArrayRef[ArrayRef]
+
+Where the inner array references are of this format:
+
+    ['name_of_setter_method', 'value to set the setter method to'].
+
+Since L<DigitalOcean::Collection> classes are generic and can hold any object, this can be used to initialize 
+the setter method of all objects in the collection to a certain value. For example, if you wanted a collection of
+L<DigitalOcean::Domain> objects to have their DigitalOcean property set to the L<DigitalOcean> object, you could do this when creating
+the collection:
+
+    my $collection = DigitalOcean::Collection->new(
+        init_objects => [['DigitalOcean', $do]],
+        ... #other initialization stuff
+    );
+
+This is mainly just for use by the L<DigitalOcean> module when creating L<DigitalOcean::Collection>s.
+
+=cut
+
 has init_objects => (
     is => 'rw',
     isa => 'ArrayRef[ArrayRef]',
