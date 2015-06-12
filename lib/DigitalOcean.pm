@@ -281,6 +281,14 @@ sub _DELETE {
     return $self->_request(%args);
 }
 
+sub _PUT { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{req_method} = PUT;
+
+    return $self->_request(%args);
+}
+
 sub _decode { 
     my ($self, $type, $json, $key) = @_;
     my $attrs = $key ? $json->{$key} : $json;
@@ -314,7 +322,7 @@ sub get_user_information {
 }
 
 sub _get_collection { 
-    my ($self, $path, $type_name, $json_key, $per_page) = @_;
+    my ($self, $path, $type_name, $json_key, $per_page, $init_objects) = @_;
 
     my $do_response = $self->_GET(path => $path, per_page => $per_page);
 
@@ -324,6 +332,7 @@ sub _get_collection {
         json_key => $json_key,
         per_page => $per_page,
         response => $do_response,
+        init_objects => $init_objects,
     );
 }
 
@@ -331,6 +340,13 @@ sub _get_object {
     my ($self, $path, $type_name, $json_key) = @_;
 
     my $do_response = $self->_GET(path => $path);
+    return $self->_decode($type_name, $do_response->json, $json_key);
+}
+
+sub _put_object { 
+    my ($self, $path, $type_name, $json_key, $req_body_hash) = @_;
+
+    my $do_response = $self->_PUT(path => $path, req_body_hash => $req_body_hash);
     return $self->_decode($type_name, $do_response->json, $json_key);
 }
 

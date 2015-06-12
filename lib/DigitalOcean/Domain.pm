@@ -82,7 +82,8 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub records {
     my ($self, $per_page) = @_;
-    return $self->DigitalOcean->_get_collection($self->path, 'DigitalOcean::Domain::Record', 'domain_records', $per_page);
+    my $init_arr = [['DigitalOcean', $self->DigitalOcean], ['Domain', $self]];
+    return $self->DigitalOcean->_get_collection($self->path, 'DigitalOcean::Domain::Record', 'domain_records', $per_page, $init_arr);
 }
 
 
@@ -131,7 +132,7 @@ sub create_record {
     my %args = @_;
 
     my $record = $self->DigitalOcean->_create($self->path, 'DigitalOcean::Domain::Record', 'domain_record', \%args);
-    $record->DigitalOcean($self->DigitalOcean);
+    $self->_prepare_record($record);
 
     return $record;
 }
@@ -148,9 +149,15 @@ sub record {
     my ($self, $id) = @_;
 
     my $record = $self->DigitalOcean->_get_object($self->path . "/$id", 'DigitalOcean::Domain::Record', 'domain_record');
-    $record->DigitalOcean($self->DigitalOcean);
+    $self->_prepare_record($record);
 
     return $record;
+}
+
+sub _prepare_record { 
+    my ($self, $record) = @_;
+    $record->DigitalOcean($self->DigitalOcean);
+    $record->Domain($self);
 }
 
 =method delete

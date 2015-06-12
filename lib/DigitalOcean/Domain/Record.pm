@@ -9,6 +9,11 @@ has DigitalOcean => (
     isa => 'DigitalOcean',
 );
 
+has Domain => (
+    is => 'rw',
+    isa => 'DigitalOcean::Domain',
+);
+
 =method id
 
 A unique identifier for each domain record.
@@ -85,6 +90,65 @@ has weight => (
     is => 'ro',
     isa => 'Num|Undef',
 );
+
+=method path
+
+Returns the api path for this record.
+
+=cut
+
+sub path {
+    my ($self) = @_;
+    return $self->Domain->path . '/' . $self->id;
+}
+
+=method update
+ 
+This method edits an existing domain record. It updates the L<DigitalOcean::Domain::Record> object
+to reflect the changes.
+ 
+=over 4
+ 
+=item 
+ 
+B<type> String, The record type (A, MX, CNAME, etc).
+ 
+=item
+ 
+B<name> String (A, AAAA, CNAME, TXT, SRV), The host name, alias, or service being defined by the record.
+ 
+=item
+ 
+B<data> String (A, AAAA, CNAME, MX, TXT, SRV, NS), Variable data depending on record type. 
+ 
+=item
+ 
+B<priority> Number (MX, SRV), The priority of the host (for SRV and MX records. null otherwise).
+ 
+=item
+ 
+B<port> Number, The port that the service is accessible on (for SRV records only. null otherwise).
+ 
+=item
+ 
+B<weight> Number, The weight of records with the same priority (for SRV records only. null otherwise).
+ 
+=back
+ 
+    $record->update(
+        record_type => 'A',
+        name => 'newname',
+        data => '196.87.89.45',
+    );
+ 
+=cut
+
+sub update { 
+    my $self = shift;
+    my (%args) = @_;
+
+    my $do_response = $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::Domain::Record', 'domain_record', \%args);
+}
 
 =method delete
 

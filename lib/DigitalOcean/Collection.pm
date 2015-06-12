@@ -121,6 +121,11 @@ has total => (
     isa => 'Int',
 );
 
+has init_objects => (
+    is => 'rw',
+    isa => 'ArrayRef[ArrayRef]',
+);
+
 sub BUILD { 
     my ($self) = @_;
     $self->_update;
@@ -142,6 +147,8 @@ sub _update {
     #get returned objects
     $self->objects($self->DigitalOcean->_decode_many($self->type_name, $self->response->json->{$self->json_key}));
 
+    $self->_init_obj;
+
     if($self->response->links and $self->response->links->pages) {
         $self->pages($self->response->links->pages);
     }
@@ -156,6 +163,18 @@ sub _update {
     $self->next_element(0);
 
     $self->total($self->response->meta->total);
+}
+
+sub _init_obj { 
+    my ($self) = @_;
+    return unless $self->init_objects;
+
+    for my $obj (@{$self->objects}) { 
+        for my $arr (@{$self->init_objects}) {
+            my ($init_obj_name, $init_obj) = @$arr;
+            $obj->$init_obj_name($init_obj);
+        }
+    }
 }
 
 =method next
