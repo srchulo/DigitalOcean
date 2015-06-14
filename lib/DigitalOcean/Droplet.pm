@@ -6,9 +6,8 @@ use DigitalOcean::Types;
 #ABSTRACT: Represents a Droplet object in the DigitalOcean API
 
 has DigitalOcean => ( 
-    is => 'ro',
+    is => 'rw',
     isa => 'DigitalOcean',
-    required => 1,
 );
 
 has id => ( 

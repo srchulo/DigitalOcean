@@ -493,6 +493,69 @@ sub domain {
     return $domain;
 }
 
+=method create_droplet
+ 
+This will create a new droplet and return a L<DigitalOcean::Droplet> object. The parameters are:
+ 
+=over 4
+ 
+=item 
+ 
+B<name> Required, String, The human-readable string you wish to use when displaying the Droplet name. The name, if set to a domain name managed in the DigitalOcean DNS management system, will configure a PTR record for the Droplet. The name set during creation will also determine the hostname for the Droplet in its internal configuration.
+
+ =item 
+ 
+B<region> Required, String, The unique slug identifier for the region that you wish to deploy in.
+ 
+=item
+ 
+B<size> Required, String, The unique slug identifier for the size that you wish to select for this Droplet.
+ 
+=item
+ 
+B<image> Required, number (if using an image ID), or String (if using a public image slug), The image ID of a public or private image, or the unique slug identifier for a public image. This image will be the base image for your Droplet.
+ 
+=item
+ 
+B<ssh_keys> Optional, Array Reference, An array reference containing the IDs or fingerprints of the SSH keys that you wish to embed in the Droplet's root account upon creation.
+ 
+=item
+ 
+B<backups> Optional, Boolean, A boolean indicating whether automated backups should be enabled for the Droplet. Automated backups can only be enabled when the Droplet is created.
+ 
+=item
+ 
+B<ipv6> Optional, Boolean, A boolean indicating whether IPv6 is enabled on the Droplet.
+
+=item
+ 
+B<private_networking> Optional, Boolean, A boolean indicating whether private networking is enabled for the Droplet. Private networking is currently only available in certain regions.
+
+=item
+ 
+B<user_data> Optional, String, A string of the desired User Data for the Droplet. User Data is currently only available in regions with metadata listed in their features.
+ 
+=back
+ 
+    my $new_droplet = $do->create_droplet(
+        name => 'new_droplet',
+        region => $region,
+        size => $size,
+        image => $image,
+    );
+ 
+=cut
+
+sub create_droplet {
+    my $self = shift;
+    my %args = @_;
+
+    my $droplet = $self->_create('droplets', 'DigitalOcean::Droplet', 'droplet', \%args);
+    $droplet->DigitalOcean($self);
+
+    return $droplet;
+}
+
 =method droplet
 
 This will retrieve a droplet by id and return a L<DigitalOcean::Droplet> object.

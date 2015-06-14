@@ -4,12 +4,6 @@ use Mouse;
 
 #ABSTRACT: Represents a Network object in the DigitalOcean API
 
-has DigitalOcean => ( 
-    is => 'ro',
-    isa => 'DigitalOcean',
-    required => 1,
-);
-
 has end => ( 
     is => 'ro',
     isa => 'Str',
