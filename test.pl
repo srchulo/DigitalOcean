@@ -47,6 +47,21 @@ exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
+$do->per_page(2);
+my $droplets_collection = $do->droplets;
+print "$droplets_collection\n";
+
+print $droplets_collection->total . "\n";
+
+my $next;
+while($next = $droplets_collection->next) { 
+    print $next->name . "\n";
+    print "  " . $next->id . "\n";
+}
+
+exit;
+
+
 my $droplet = $do->droplet(207673);
 
 print Data::Dumper->Dump([$droplet]);

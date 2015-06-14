@@ -324,6 +324,8 @@ sub get_user_information {
 sub _get_collection { 
     my ($self, $path, $type_name, $json_key, $per_page, $init_objects) = @_;
 
+    $init_objects = [] unless $init_objects;
+
     my $do_response = $self->_GET(path => $path, per_page => $per_page);
 
     return DigitalOcean::Collection->new (

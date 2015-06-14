@@ -148,6 +148,7 @@ This is mainly just for use by the L<DigitalOcean> module when creating L<Digita
 has init_objects => (
     is => 'rw',
     isa => 'ArrayRef[ArrayRef]',
+    default => sub { [] },
 );
 
 sub BUILD { 
