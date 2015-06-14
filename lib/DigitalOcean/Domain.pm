@@ -43,6 +43,12 @@ has zone_file => (
     isa => 'Str|Undef',
 );
 
+=method path
+
+Returns the api path for this domain
+
+=cut
+
 has path => (
     is => 'rw',
     isa => 'Str',

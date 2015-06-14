@@ -109,6 +109,47 @@ has next_backup_window => (
     coerce => 1,
 );
 
+=method path
+
+Returns the api path for this droplet.
+
+=cut
+
+sub path { 
+    'droplets/' . shift->id . '/kernels';
+}
+
+=method kernels
+ 
+This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Kernels> objects of the kernels collection. 
+ 
+    my $kernels_collection = $droplet->kernels;
+    my $obj;
+
+    while($obj = $kernels_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L<per_page|DigitalOcean/"per_page">, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $kernels_collection = $droplet->kernels(2);
+    my $obj;
+
+    while($obj = $kernels_collection->next) { 
+        print $obj->name . "\n";
+    }
+ 
+=cut
+
+sub kernels { 
+    my ($self, $per_page) = @_;
+    return $self->DigitalOcean->_get_collection($self->path, 'DigitalOcean::Kernel', 'kernels', $per_page);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
