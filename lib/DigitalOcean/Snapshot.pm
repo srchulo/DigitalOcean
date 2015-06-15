@@ -5,9 +5,8 @@ use Mouse;
 #ABSTRACT: Represents a Snapshot object in the DigitalOcean API
 
 has DigitalOcean => ( 
-    is => 'ro',
+    is => 'rw',
     isa => 'DigitalOcean',
-    required => 1,
 );
 
 has id => ( 
@@ -42,7 +41,7 @@ has public => (
 
 has regions => ( 
     is => 'ro',
-    isa => 'ArrayRef[DigitalOcean::Region]',
+    isa => 'ArrayRef[Str]',
 );
 
 has min_disk_size => (
