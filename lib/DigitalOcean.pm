@@ -10,6 +10,7 @@ use DigitalOcean::Collection;
 use DigitalOcean::Account;
 use DigitalOcean::Action;
 use DigitalOcean::Domain;
+use DigitalOcean::Droplet::Upgrade;
 
 #for requesting
 use LWP::UserAgent;
@@ -239,7 +240,7 @@ sub _request {
         status_line => $response->status_line,
     );
 
-    if($json) {
+    if($json and ref($json) eq 'HASH') {
         #add meta object if one was passed back
         $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
 
@@ -349,7 +350,16 @@ sub _get_array {
     my ($self, $path, $type_name, $json_key) = @_;
 
     my $do_response = $self->_GET(path => $path);
-    return $self->_decode_many($type_name, $do_response->json->{$json_key});
+
+    my $arr;
+    if($json_key) { 
+        $arr = $do_response->json->{$json_key};
+    }
+    else { 
+        $arr = $do_response->json;
+    }
+
+    return $self->_decode_many($type_name, $arr);
 }
 
 sub _put_object { 
@@ -611,6 +621,27 @@ If you would like a different C<per_page> value to be used for this collection i
 sub droplets {
     my ($self, $per_page) = @_;
     return $self->_get_collection('droplets', 'DigitalOcean::Droplet', 'droplets', $per_page);
+}
+
+=method droplet_upgrades
+
+This method retrieves a list of droplets that are scheduled to be upgraded as L<DigitalOcean::Droplet::Upgrade> objects and returns them as an array reference.
+
+    my $droplet_upgrades = $do->droplet_upgrades;
+
+    for my $upgrade (@$droplet_upgrades) { 
+        print "ID: " . $upgrade->droplet_id . "\n";
+        print "Date of migration: " . $upgrade->date_of_migration . "\n";
+        print "url " . $upgrade->url . "\n";
+        print "\n";
+    }
+
+=cut
+
+sub droplet_upgrades { 
+    my ($self) = @_;
+
+    return $self->_get_array('droplet_upgrades', 'DigitalOcean::Droplet::Upgrade');
 }
 
 __PACKAGE__->meta->make_immutable();

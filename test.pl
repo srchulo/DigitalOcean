@@ -46,6 +46,17 @@ print $net->v4->[0]->gateway;
 exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
+
+    my $droplet_upgrades = $do->droplet_upgrades;
+
+    for my $upgrade (@$droplet_upgrades) { 
+        print "ID: " . $upgrade->droplet_id . "\n";
+        print "Date of migration: " . $upgrade->date_of_migration . "\n";
+        print "url " . $upgrade->url . "\n";
+        print "\n";
+    }
+
+exit;
 my $droplet = $do->droplet(207887);
 
     my $neighbors = $droplet->neighbors;
