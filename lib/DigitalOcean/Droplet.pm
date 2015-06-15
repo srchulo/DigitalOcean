@@ -184,6 +184,38 @@ sub snapshots {
     return $self->DigitalOcean->_get_collection($self->path . 'snapshots', 'DigitalOcean::Snapshot', 'snapshots', $per_page);
 }
 
+=method backups
+ 
+This will retrieve the backups that have been created from a Droplet
+by returning a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Backup> objects of the backups collection. 
+ 
+    my $backups_collection = $droplet->backups;
+    my $obj;
+
+    while($obj = $backups_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L<per_page|DigitalOcean/"per_page">, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $backups_collection = $droplet->backups(2);
+    my $obj;
+
+    while($obj = $backups_collection->next) { 
+        print $obj->name . "\n";
+    }
+ 
+=cut
+
+sub backups { 
+    my ($self, $per_page) = @_;
+    return $self->DigitalOcean->_get_collection($self->path . 'backups', 'DigitalOcean::Backup', 'backups', $per_page);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   

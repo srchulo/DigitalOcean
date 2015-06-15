@@ -4,12 +4,6 @@ use Mouse;
 
 #ABSTRACT: Represents a Backup object in the DigitalOcean API
 
-has DigitalOcean => ( 
-    is => 'ro',
-    isa => 'DigitalOcean',
-    required => 1,
-);
-
 has id => ( 
     is => 'ro',
     isa => 'Num',
@@ -42,12 +36,17 @@ has public => (
 
 has regions => ( 
     is => 'ro',
-    isa => 'ArrayRef[DigitalOcean::Region]',
+    isa => 'ArrayRef[Str]',
 );
 
 has min_disk_size => (
     is => 'ro',
     isa => 'Num',
+);
+
+has created_at => (
+    is => 'ro',
+    isa => 'Str',
 );
 
 =head1 SYNOPSIS
