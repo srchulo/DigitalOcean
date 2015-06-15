@@ -345,6 +345,13 @@ sub _get_object {
     return $self->_decode($type_name, $do_response->json, $json_key);
 }
 
+sub _get_array { 
+    my ($self, $path, $type_name, $json_key) = @_;
+
+    my $do_response = $self->_GET(path => $path);
+    return $self->_decode_many($type_name, $do_response->json->{$json_key});
+}
+
 sub _put_object { 
     my ($self, $path, $type_name, $json_key, $req_body_hash) = @_;
 

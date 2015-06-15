@@ -262,6 +262,26 @@ sub delete {
     return $self->DigitalOcean->_delete(path => $self->path);
 }
 
+=method neighbors
+
+This method returns all of the droplets that are running on the same physical server as the L<DigitalOcean::Droplet> object this method is called with.
+It returns an array reference.
+
+    my $neighbors = $droplet->neighbors;
+
+    for my $neighbor (@$neighbors) { 
+        print $neighbor->name . "\n";
+    }
+
+=cut
+
+sub neighbors { 
+    my ($self) = @_;
+
+    return $self->DigitalOcean->_get_array($self->path . 'neighbors', 'DigitalOcean::Droplet', 'droplets');
+
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
