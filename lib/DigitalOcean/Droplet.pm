@@ -248,6 +248,20 @@ sub actions {
     return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', $per_page);
 }
 
+=method delete
+
+This deletes the droplet. This will return 1 on success and undef on failure.
+
+    $droplet->delete;
+    #droplet now gone
+
+=cut
+
+sub delete { 
+    my ($self) = @_;
+    return $self->DigitalOcean->_delete(path => $self->path);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
