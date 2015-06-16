@@ -526,6 +526,24 @@ sub rename {
     return $action;
 }
 
+=method change_kernel
+
+This method allows you to change the kernel of a Droplet. It returns a L<DigitalOcean::Action> object.
+
+=over 4
+ 
+=item
+ 
+B<kernel> Required, Number, A unique number used to identify and reference a specific kernel.
+ 
+=back
+
+    my $action = $droplet->change_kernel(kernel => 991);
+
+=cut
+
+sub change_kernel { shift->_action(@_, type => 'change_kernel') }
+
 =head1 SYNOPSIS
  
     FILL ME IN   
