@@ -312,6 +312,22 @@ sub disable_backups {
     $self->_action(%args);
 }
 
+=method reboot
+
+This method allows you to reboot a droplet. This is the preferred method to use if a server is not responding. It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->reboot;
+
+=cut
+
+sub reboot { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{type} = 'reboot';
+
+    $self->_action(%args);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
