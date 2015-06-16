@@ -294,6 +294,20 @@ sub neighbors {
 
 }
 
+=method action
+
+This will retrieve an action associated with the L<DigitalOcean::Droplet> object by id and return a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->action(56789);
+
+=cut
+
+sub action { 
+    my ($self, $id) = @_;
+
+    return $self->DigitalOcean->_get_object($self->path . "actions/$id", 'DigitalOcean::Action', 'action');
+}
+
 =head2 Actions
 
 =method disable_backups
