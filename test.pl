@@ -46,7 +46,13 @@ print $net->v4->[0]->gateway;
 exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
-my $droplet = $do->droplet(5741951);
+my $droplet = $do->droplet(5742146);
+
+$droplet->rename(name => 'dan', wait_on_action => 1);
+
+print 'new name ' . $droplet->name . "\n";
+
+exit;
 
 my $action = $droplet->rebuild(image => 'ubuntu-14-04-x64');
 

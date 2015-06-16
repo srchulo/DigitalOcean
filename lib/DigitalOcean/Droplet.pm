@@ -482,7 +482,7 @@ sub resize_reboot {
 =method rebuild
 
 This method allows you to rebuild a Droplet. It returns a L<DigitalOcean::Action> object.
-A rebuild action functions just like a new create.
+A rebuild action functions just like a new create. This is useful if you want to start again but retain the same IP address for your droplet.
 
 =over 4
  
@@ -499,6 +499,32 @@ B<image> Required, string if an image slug. number if an image ID., An image slu
 =cut
 
 sub rebuild { shift->_action(@_, type => 'rebuild') }
+
+=method rename
+ 
+This method renames the droplet to the specified name. The new name is reflected in the L<DigitalOcean::Droplet> object.
+It returns a L<DigitalOcean::Action> object.
+ 
+=over 4
+ 
+=item
+ 
+B<name> Required, String, The new name for the Droplet.
+ 
+=back
+ 
+    $droplet->rename(name => $new_name);
+ 
+=cut
+
+sub rename { 
+    my $self = shift;
+    my (%params) = @_;
+
+    my $action = $self->_action(@_, type => 'rename');
+    $self->name($params{name});
+    return $action;
+}
 
 =head1 SYNOPSIS
  
