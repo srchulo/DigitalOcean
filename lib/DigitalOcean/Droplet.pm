@@ -713,6 +713,16 @@ sub snapshot_reboot {
     return \@arr;
 }
 
+=method upgrade
+
+This method allows you to upgrade a droplet. It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->upgrade;
+
+=cut
+
+sub upgrade { shift->_action(@_, type => 'upgrade') }
+
 =head1 SYNOPSIS
  
     FILL ME IN   
