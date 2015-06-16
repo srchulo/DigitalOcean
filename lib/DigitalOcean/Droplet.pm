@@ -595,6 +595,16 @@ This method allows you to enable private networking on an existing Droplet (with
 
     my $action = $droplet->enable_private_networking;
 
+In order to enable private networking for your droplet, it must first be powered off, and you must wait for the droplet
+to be powered off before you can call snapshot on the droplet. Making the call accurately would look something like this:
+ 
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->enable_private_networking(wait_on_event => 1);
+    $droplet->power_on(wait_on_event => 1);
+ 
+If your droplet is already on and you want to enable private networking and boot your droplet
+back up, you can call L</enable_private_networking_reboot> to do the above code for you.
+
 =cut
 
 sub enable_private_networking { shift->_action(@_, type => 'enable_private_networking') }
@@ -634,6 +644,39 @@ sub enable_private_networking_reboot {
     push(@arr, $self->power_on(wait_on_action => 1));
 
     return \@arr;
+}
+
+=method snapshot
+ 
+This method allows you to take a snapshot of the droplet once it has been powered off, which can later be restored or used to create a new droplet from the same image.
+ 
+=over 4
+ 
+=item
+ 
+B<name> Optional, String, this is the name of the new snapshot you want to create. If not set, the snapshot name will default to date/time
+ 
+=back
+ 
+In order to take a snapshot of your droplet, it must first be powered off, and you must wait for the droplet
+to be powered off before you can call snapshot on the droplet. Making the call accurately would look something like this:
+ 
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->snapshot;
+ 
+If your droplet is already on and you essentially want to take a snapshot and boot your droplet
+back up, you can call L/snapshot_reboot> to do the above code for you. (The L</snapshot> method turns the droplet back on for you).
+ 
+=cut
+
+sub snapshot { 
+    my $self = shift;
+
+    my $action = $self->_action(@_, type => 'snapshot');
+    my $temp_droplet = $self->DigitalOcean->droplet($self->id);
+    $self->snapshot_ids($temp_droplet->snapshot_ids);
+
+    return $action;
 }
 
 =head1 SYNOPSIS
