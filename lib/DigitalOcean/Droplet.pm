@@ -356,7 +356,7 @@ sub power_off { shift->_action(@_, type => 'power_off') }
 
 =method power_on
 
-This method allows you to poweron a powered off droplet.
+This method allows you to poweron a powered off droplet. It returns a L<DigitalOcean::Action> object.
 
     my $action = $droplet->power_on;
 
@@ -387,7 +387,7 @@ sub restore { shift->_action(@_, type => 'restore') }
 
 =method password_reset
 
-This method will reset the root password for a droplet. Please be aware that this will reboot the droplet to allow resetting the password.
+This method will reset the root password for a droplet. Please be aware that this will reboot the droplet to allow resetting the password. It returns a L<DigitalOcean::Action> object.
 
     my $action = $droplet->password_reset;
 
@@ -395,7 +395,46 @@ This method will reset the root password for a droplet. Please be aware that thi
 
 sub password_reset { shift->_action(@_, type => 'password_reset') }
 
+=method resize
 
+This method allows you to resize a specific droplet to a different size. It returns a L<DigitalOcean::Action> object.
+
+=over 4
+ 
+=item
+ 
+B<disk> Optional, Boolean (1 or undef), Whether to increase disk size
+
+=item
+ 
+B<size> Required, String, The size slug that you want to resize to.
+ 
+=back
+
+    my $action = $droplet->resize(
+        disk => 1,
+        size => '1gb', 
+    );
+
+In order to resize your droplet, it must first be powered off, and you must wait for the droplet
+to be powered off before you can call resize on the droplet. Making the call accurately would look something like this:
+ 
+    $droplet->power_off(wait_on_action => 1);
+
+    my $action = $droplet->resize(
+        disk => 1,
+        size => '1gb', 
+        wait_on_action => 1,
+    );
+
+    $droplet->power_on(wait_on_action => 1);
+             
+If your droplet is already on and you want to resize it and boot your droplet
+back up, you can call L<resize_reboot|/"resize_reboot"> to do the above code for you.
+
+=cut
+
+sub resize { shift->_action(@_, type => 'resize') }
 
 =head1 SYNOPSIS
  
