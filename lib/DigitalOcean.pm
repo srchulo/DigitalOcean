@@ -47,6 +47,20 @@ has api => (
     required => 0,
 );
 
+has 'time_between_requests' => (
+        is => 'rw',
+        isa => 'Int',
+        default => 2,
+        required => 0,
+);
+
+has 'wait_on_actions' => (
+        is => 'rw',
+        isa => 'Bool',
+        default => undef,
+        required => 0,
+);
+
 =method ratelimit_limit
 
 Returns the number of requests that can be made per hour. See L<here|https://developers.digitalocean.com/documentation/v2/#rate-limit> for more details.
@@ -85,6 +99,66 @@ use constant {
     POST => 'POST',
     HEAD => 'HEAD',
 };
+
+=head1 WAITING ON ACTIONS
+ 
+=head2 wait_on_actions
+ 
+For some calls in Digital Ocean's API, you need to wait for one call to finish before you can
+submit another request that depends on the first call. For instance, if you resize a droplet
+and then want to take a snapshot of the droplet, you must wait until the action of resizing
+the droplet is complete before you can take the snapshot of this droplet. If you set wait_on_actions
+to 1, then L<DigitalOcean> will wait on every action until it is complete, so this way you do not have to worry 
+about the synchronization of events or if you need to wait between two events. However,
+turning wait_on_actions on for every action can also cause your script to run much slower if you do not need
+to be waiting on every action.
+ 
+You may wait on all events by passing in wait_on_actions when you create the L<DigitalOcean> object:
+ 
+    my $do = DigitalOcean->new(oauth_token => $oauth_token, wait_on_actions => 1);
+ 
+Or you can toggle it after you have created the L<DigitalOcean> object:
+ 
+    $do->wait_on_actions(1);
+    $do->wait_on_actions(undef);
+ 
+The default for wait_on_actions is that it is set to undef and does not wait on actions.
+ 
+=head2 wait_on_action
+ 
+A more efficient solution is to only wait on indiviudal actions that you have to wait on. You can pass in the
+wait_on_action flag to any subroutine that returns a L <DigitalOcean::Action> object (and also L</create_droplet>)
+and L<DigitalOcean> will wait until that call is complete before returning.
+ 
+    my $droplet = $do->create_droplet(
+        name => 'new_droplet',
+        size_id => $size_id,
+        image_id => $image_id,
+        region_id => $region_id,
+        wait_on_event => 1,
+    );
+ 
+    $droplet->reboot(wait_on_event => 1);
+    $droplet->snapshot(wait_on_event => 1);
+ 
+    etc.
+ 
+L<DigitalOcean> uses L<DigitalOcean::Event's wait|DigitalOcean::Event/"wait"> subroutine to wait on events.
+ 
+=head2 time_between_requests
+ 
+L<DigitalOcean> uses L<DigitalOcean::Event's wait|DigitalOcean::Event/"wait"> subroutine to wait on events. It does
+this by making requests to Digital Ocean until the L<event|DigitalOcean::Event> is complete. You can use time_between_requests
+to determine how long L<DigitalOcean> waits between requests before making another request to Digital Ocean to see if an event is
+done. You can use it like so:
+ 
+    $do->time_between_requests(1);
+ 
+or
+ 
+    my $do = DigitalOcean->new(client_id=> $client_id, api_key => $api_key, time_between_requests => 1);
+ 
+An integer value must be passed in. The default is 2.
 
 =method die_pretty
 
@@ -197,8 +271,13 @@ sub _request {
     #add authentication
     $req->header(Authorization => 'Bearer ' . $self->oauth_token);
 
+    my $wait_on_action;
+
     #set body content
     if($req_body_hash) {
+        #get wait on action out if it was passed in
+        $wait_on_action = delete $req_body_hash->{wait_on_action};
+
         #set json header
         $req->header('Content-Type' => 'application/json');
 
@@ -232,6 +311,8 @@ sub _request {
         }
 
     }
+
+    #CHECK FOR WAIT_ON_ACTION OR WAIT_ON_ACTIONS AND IF ACTION WAS MAIN RETURN OR IN LINKS
 
     my $do_response = DigitalOcean::Response->new(
         json => $json,
@@ -387,9 +468,17 @@ sub _delete {
 sub _action { 
     my $self = shift;
     my (%args) = @_;
+
+    #don't delete, because _request might need to wait on event
+    my $wait_on_action = $args{req_body_hash}->{wait_on_action};
+
     my $do_response = $self->_POST(%args);
 
-    return $self->_decode('DigitalOcean::Action', $do_response->json, 'action');
+    my $action = $self->_decode('DigitalOcean::Action', $do_response->json, 'action');
+
+    $action->wait if $wait_on_action or $self->wait_on_actions;
+
+    return $action;
 }
 
 =method actions
@@ -571,6 +660,8 @@ B<user_data> Optional, String, A string of the desired User Data for the Droplet
         image => $image,
     );
  
+
+    Even though this method does not return a L<DigitalOcean::Action>, it can still be used with L</wait_on_action> and L</wait_on_actions>.
 =cut
 
 sub create_droplet {

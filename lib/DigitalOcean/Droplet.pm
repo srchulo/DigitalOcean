@@ -297,6 +297,10 @@ sub neighbors {
 
 =method disable_backups
 
+This method disables backups on your droplet. It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->disable_backups;
+
 =cut
 
 sub disable_backups { 

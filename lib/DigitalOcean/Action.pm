@@ -23,7 +23,7 @@ The current status of the action. This can be "in-progress", "completed", or "er
 =cut
 
 has status => ( 
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
 );
 
@@ -56,7 +56,7 @@ A time value given in ISO8601 combined date and time format that represents when
 =cut
 
 has completed_at => ( 
-    is => 'ro',
+    is => 'rw',
     isa => 'Str|Undef',
 );
 
@@ -104,6 +104,49 @@ has region_slug => (
     is => 'ro',
     isa => 'Undef|Str',
 );
+
+=method complete
+ 
+This method returns true if the action is complete, false if it is not.
+ 
+    if($action->complete) { 
+        #do something
+    }
+ 
+=cut
+ 
+sub complete { shift->status eq 'completed' }
+ 
+=method wait
+ 
+This method will wait for an action to complete and will not return until
+the action has completed. It is recommended to not use this directly, but
+rather to let L<DigitalOcean> call this for you (see L<WAITING ON EVENTS|DigitalOcean/"WAITING ON EVENTS">).
+ 
+    $action->wait;
+ 
+    #do stuff now that event is done.
+ 
+This method works by making requests to Digital Ocean's API to see if the action
+is complete yet. See L<TIME BETWEEN REQUESTS|DigitalOcean/"time_between_requests">.
+ 
+=cut
+ 
+sub wait { 
+    my ($self) = @_;
+    my $action = $self;
+ 
+    print "going to wait\n";
+    until($action->complete) { 
+        print "waiting\n";
+        sleep($self->DigitalOcean->time_between_requests);
+        $action = $self->DigitalOcean->action($action->id);       
+    }
+    print "complete\n";
+ 
+    $self->status($action->status);
+    $self->completed_at($action->completed_at);
+}
 
 =head1 SYNOPSIS
  
