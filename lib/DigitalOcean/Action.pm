@@ -5,6 +5,11 @@ use DigitalOcean::Types;
 
 #ABSTRACT: Represents an Action object in the DigitalOcean API
 
+has DigitalOcean => (
+    is => 'rw',
+    isa => 'DigitalOcean',
+);
+
 =method id
 
 A unique numeric ID that can be used to identify and reference an action.

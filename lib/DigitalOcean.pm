@@ -312,8 +312,6 @@ sub _request {
 
     }
 
-    #CHECK FOR WAIT_ON_ACTION OR WAIT_ON_ACTIONS AND IF ACTION WAS MAIN RETURN OR IN LINKS
-
     my $do_response = DigitalOcean::Response->new(
         json => $json,
         status_code => $response->code,
@@ -325,8 +323,23 @@ sub _request {
         #add meta object if one was passed back
         $do_response->meta(DigitalOcean::Meta->new(%{$json->{meta}})) if $json->{meta};
 
-        #add links object if one was passed back
-        $do_response->links(DigitalOcean::Links->new(%{$json->{links}})) if $json->{links};
+        if($json->{links}) {
+            #add links object if one was passed back
+            $do_response->links(DigitalOcean::Links->new(%{$json->{links}}));
+
+            #if actions array is present and we are supposed to wait on events, then wait!
+            if($json->{links}->{actions} and ($self->wait_on_actions or $wait_on_action)) { 
+                print "WAITING on ACTION in request\n";
+
+                #wait on each returned action that occurred from the API call
+                for my $act_temp (@{$json->{links}->{actions}}) { 
+                    my $action = $self->action($act_temp->{id});
+
+                    #wait on action
+                    $action->wait; 
+                } 
+            }
+        }
     }
 
     $self->last_response($do_response);
@@ -509,7 +522,8 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub actions {
     my ($self, $per_page) = @_;
-    return $self->_get_collection('actions', 'DigitalOcean::Action', 'actions', $per_page);
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->_get_collection('actions', 'DigitalOcean::Action', 'actions', $per_page, $init_arr);
 }
 
 =method action
@@ -554,7 +568,8 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub domains {
     my ($self, $per_page) = @_;
-    return $self->_get_collection('domains', 'DigitalOcean::Domain', 'domains', $per_page);
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->_get_collection('domains', 'DigitalOcean::Domain', 'domains', $per_page, $init_arr);
 }
 
 =method create_domain
@@ -719,7 +734,8 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub droplets {
     my ($self, $per_page) = @_;
-    return $self->_get_collection('droplets', 'DigitalOcean::Droplet', 'droplets', $per_page);
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->_get_collection('droplets', 'DigitalOcean::Droplet', 'droplets', $per_page, $init_arr);
 }
 
 =method droplet_upgrades

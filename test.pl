@@ -46,6 +46,22 @@ print $net->v4->[0]->gateway;
 exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
+
+    my $new_droplet = $do->create_droplet(
+        name => 'new-droplet',
+        region => 'sfo1',
+        size => '512mb',
+        image => 'ubuntu-14-04-x64',
+        ssh_keys => [887618],
+        backups => 1,
+        ipv6 => 1,
+        private_networking => 1,
+        wait_on_action => 1,
+    );
+    exit;
+
+
+
 my $droplet = $do->droplet(5735188);
 $do->wait_on_actions(1);
 

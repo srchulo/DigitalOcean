@@ -256,7 +256,8 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub actions { 
     my ($self, $per_page) = @_;
-    return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', $per_page);
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', $per_page, $init_arr);
 }
 
 =method delete
