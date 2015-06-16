@@ -318,6 +318,8 @@ This method allows you to reboot a droplet. This is the preferred method to use 
 
     my $action = $droplet->reboot;
 
+A reboot action is an attempt to reboot the Droplet in a graceful way, similar to using the reboot command from the console.
+
 =cut
 
 sub reboot { 
@@ -364,7 +366,23 @@ sub shutdown {
     $self->_action(%args);
 }
 
+=method power_off
 
+This method allows you to poweroff a running droplet. The droplet will remain in your account. It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->power_cycle;
+
+A power_off event is a hard shutdown and should only be used if the shutdown action is not successful. It is similar to cutting the power on a server and could lead to complications.
+
+=cut
+
+sub power_off { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{type} = 'power_off';
+
+    $self->_action(%args);
+}
 
 =head1 SYNOPSIS
  
