@@ -544,6 +544,16 @@ B<kernel> Required, Number, A unique number used to identify and reference a spe
 
 sub change_kernel { shift->_action(@_, type => 'change_kernel') }
 
+=method enable_ipv6
+
+This method allows you to enable IPv6 networking on an existing Droplet (within a region that has IPv6 available). It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->enable_ipv6;
+
+=cut
+
+sub enable_ipv6 { shift->_action(@_, type => 'enable_ipv6') }
+
 =head1 SYNOPSIS
  
     FILL ME IN   
