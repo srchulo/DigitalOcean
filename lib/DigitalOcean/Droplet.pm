@@ -430,11 +430,54 @@ to be powered off before you can call resize on the droplet. Making the call acc
     $droplet->power_on(wait_on_action => 1);
              
 If your droplet is already on and you want to resize it and boot your droplet
-back up, you can call L<resize_reboot|/"resize_reboot"> to do the above code for you.
+back up, you can call L</resize_reboot> to do the above code for you.
 
 =cut
 
 sub resize { shift->_action(@_, type => 'resize') }
+
+=method resize_reboot
+ 
+If your droplet is already running, this method makes a call to L<resize|/"resize">
+for you and powers off your droplet, and then powers it on after it is done resizing
+and handles L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> to finish so you do not have to write this code.
+This is essentially the code that L</resize_reboot> performs for you:
+ 
+    $droplet->power_off(wait_on_action => 1);
+
+    $droplet->resize(
+        disk => $disk,
+        size => $size,
+        wait_on_action => 1,
+    );
+
+    $droplet->power_on(wait_on_event => 1);
+
+So a call to L</resize_reboot> would look like:
+
+    my $actions = $droplet->resize_reboot(
+        disk => 1,
+        size => '1gb', 
+    );
+
+    for my $action (@$actions) { 
+        print $action->id . ' ' . $action->status . "\n";
+    }
+
+It returns an array reference of all three actions returned by L</power_off>, L</resize>, and L</power_on>.
+ 
+=cut
+ 
+sub resize_reboot { 
+    my $self = shift;
+    my @arr;
+
+    push(@arr, $self->power_off(wait_on_action => 1));
+    push(@arr, $self->resize(@_, wait_on_action => 1));
+    push(@arr, $self->power_on(wait_on_action => 1));
+
+    return \@arr;
+}
 
 =head1 SYNOPSIS
  
