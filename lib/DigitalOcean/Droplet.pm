@@ -544,6 +544,40 @@ B<kernel> Required, Number, A unique number used to identify and reference a spe
 
 sub change_kernel { shift->_action(@_, type => 'change_kernel') }
 
+=method change_kernel_reboot
+ 
+In order for a new kernel to be active, the machine must be powered off and then powered on. This function changes the kernel
+for you and powers off your droplet, and then powers it on. It also handles
+L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> so you do not have to write this code.
+This is essentially the code that L</change_kernel_reboot> performs for you:
+
+    $droplet->change_kernel(kernel => $kernel);
+    $droplet->power_off(wait_on_action => 1);
+    $droplet->power_on(wait_on_event => 1);
+
+So a call to L</change_kernel_reboot> would look like:
+
+    my $actions = $droplet->change_kernel_reboot(kernel => 991);
+
+    for my $action (@$actions) { 
+        print $action->id . ' ' . $action->status . "\n";
+    }
+
+It returns an array reference of all three actions returned by L</change_kernel>, L</power_off>, and L</power_on>.
+ 
+=cut
+
+sub change_kernel_reboot { 
+    my $self = shift;
+    my @arr;
+
+    push(@arr, $self->change_kernel(@_, wait_on_action => 1));
+    push(@arr, $self->power_off(wait_on_action => 1));
+    push(@arr, $self->power_on(wait_on_action => 1));
+
+    return \@arr;
+}
+
 =method enable_ipv6
 
 This method allows you to enable IPv6 networking on an existing Droplet (within a region that has IPv6 available). It returns a L<DigitalOcean::Action> object.
