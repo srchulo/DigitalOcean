@@ -110,6 +110,17 @@ has next_backup_window => (
     coerce => 1,
 );
 
+sub _action { 
+    my $self = shift;
+    my (%req_body_hash) = @_;
+
+    my %new_args;
+    $new_args{path} = $self->path . 'actions';
+    $new_args{req_body_hash} = \%req_body_hash;
+
+    $self->DigitalOcean->_action(%new_args);
+}
+
 =method path
 
 Returns the api path for this droplet.
@@ -280,6 +291,20 @@ sub neighbors {
 
     return $self->DigitalOcean->_get_array($self->path . 'neighbors', 'DigitalOcean::Droplet', 'droplets');
 
+}
+
+=head2 Actions
+
+=method disable_backups
+
+=cut
+
+sub disable_backups { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{type} = 'disable_backups';
+
+    $self->_action(%args);
 }
 
 =head1 SYNOPSIS

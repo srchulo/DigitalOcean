@@ -384,6 +384,14 @@ sub _delete {
     return $do_response->status_code == 204;
 }
 
+sub _action { 
+    my $self = shift;
+    my (%args) = @_;
+    my $do_response = $self->_POST(%args);
+
+    return $self->_decode('DigitalOcean::Action', $do_response->json, 'action');
+}
+
 =method actions
  
 This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Action> objects of the actions collection. 
