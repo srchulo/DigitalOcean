@@ -479,6 +479,27 @@ sub resize_reboot {
     return \@arr;
 }
 
+=method rebuild
+
+This method allows you to rebuild a Droplet. It returns a L<DigitalOcean::Action> object.
+A rebuild action functions just like a new create.
+
+=over 4
+ 
+=item
+ 
+B<image> Required, string if an image slug. number if an image ID., An image slug or ID. This represents the image that the Droplet will use as a base.
+ 
+=back
+
+    my $action = $droplet->rebuild(
+        image => 'ubuntu-14-04-x64',
+    );
+
+=cut
+
+sub rebuild { shift->_action(@_, type => 'rebuild') }
+
 =head1 SYNOPSIS
  
     FILL ME IN   
