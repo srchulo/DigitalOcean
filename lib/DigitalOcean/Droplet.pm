@@ -304,13 +304,7 @@ This method disables backups on your droplet. It returns a L<DigitalOcean::Actio
 
 =cut
 
-sub disable_backups { 
-    my $self = shift;
-    my (%args) = @_;
-    $args{type} = 'disable_backups';
-
-    $self->_action(%args);
-}
+sub disable_backups { shift->_action(@_, type => 'disable_backups') }
 
 =method reboot
 
@@ -322,13 +316,7 @@ A reboot action is an attempt to reboot the Droplet in a graceful way, similar t
 
 =cut
 
-sub reboot { 
-    my $self = shift;
-    my (%args) = @_;
-    $args{type} = 'reboot';
-
-    $self->_action(%args);
-}
+sub reboot { shift->_action(@_, type => 'reboot') }
 
 =method power_cycle
 
@@ -340,49 +328,61 @@ A powercycle action is similar to pushing the reset button on a physical machine
 
 =cut
 
-sub power_cycle { 
-    my $self = shift;
-    my (%args) = @_;
-    $args{type} = 'power_cycle';
-
-    $self->_action(%args);
-}
+sub power_cycle { shift->_action(@_, type => 'power_cycle') }
 
 =method shutdown
 
 This method allows you to shutdown a running droplet. The droplet will remain in your account. It returns a L<DigitalOcean::Action> object.
 
-    my $action = $droplet->power_cycle;
+    my $action = $droplet->shutdown;
 
 A shutdown action is an attempt to shutdown the Droplet in a graceful way, similar to using the shutdown command from the console. Since a shutdown command can fail, this action guarantees that the command is issued, not that it succeeds. The preferred way to turn off a Droplet is to attempt a shutdown, with a reasonable timeout, followed by a power off action to ensure the Droplet is off.
 
 =cut
 
-sub shutdown { 
-    my $self = shift;
-    my (%args) = @_;
-    $args{type} = 'shutdown';
-
-    $self->_action(%args);
-}
+sub shutdown { shift->_action(@_, type => 'shutdown') }
 
 =method power_off
 
 This method allows you to poweroff a running droplet. The droplet will remain in your account. It returns a L<DigitalOcean::Action> object.
 
-    my $action = $droplet->power_cycle;
+    my $action = $droplet->power_off;
 
 A power_off event is a hard shutdown and should only be used if the shutdown action is not successful. It is similar to cutting the power on a server and could lead to complications.
 
 =cut
 
-sub power_off { 
-    my $self = shift;
-    my (%args) = @_;
-    $args{type} = 'power_off';
+sub power_off { shift->_action(@_, type => 'power_off') }
 
-    $self->_action(%args);
-}
+=method power_on
+
+This method allows you to poweron a powered off droplet.
+
+    my $action = $droplet->power_on;
+
+=cut
+
+sub power_on { shift->_action(@_, type => 'power_on') }
+
+=method restore
+ 
+This method allows you to restore a droplet with a previous image or snapshot. This will be a mirror copy of the image or snapshot to your droplet. Be sure you have backed up any necessary information prior to restore.
+ 
+=over 4
+ 
+=item
+ 
+B<image> Required, string if an image slug. number if an image ID., An image slug or ID. This represents the image that the Droplet will use as a base.
+ 
+=back
+ 
+    my $action = $droplet->restore(image => 56789);
+
+A Droplet restoration will rebuild an image using a backup image. The image ID that is passed in must be a backup of the current Droplet instance. The operation will leave any embedded SSH keys intact.
+
+=cut
+
+sub restore { shift->_action(@_, type => 'restore') }
 
 =head1 SYNOPSIS
  
