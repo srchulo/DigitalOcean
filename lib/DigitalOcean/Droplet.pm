@@ -328,6 +328,22 @@ sub reboot {
     $self->_action(%args);
 }
 
+=method power_cycle
+
+This method allows you to power cycle a droplet. This will turn off the droplet and then turn it back on. It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->power_cycle;
+
+=cut
+
+sub power_cycle { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{type} = 'power_cycle';
+
+    $self->_action(%args);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
