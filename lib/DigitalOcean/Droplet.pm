@@ -334,6 +334,8 @@ This method allows you to power cycle a droplet. This will turn off the droplet 
 
     my $action = $droplet->power_cycle;
 
+A powercycle action is similar to pushing the reset button on a physical machine, it's similar to booting from scratch.
+
 =cut
 
 sub power_cycle { 
@@ -343,6 +345,26 @@ sub power_cycle {
 
     $self->_action(%args);
 }
+
+=method shutdown
+
+This method allows you to shutdown a running droplet. The droplet will remain in your account. It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->power_cycle;
+
+A shutdown action is an attempt to shutdown the Droplet in a graceful way, similar to using the shutdown command from the console. Since a shutdown command can fail, this action guarantees that the command is issued, not that it succeeds. The preferred way to turn off a Droplet is to attempt a shutdown, with a reasonable timeout, followed by a power off action to ensure the Droplet is off.
+
+=cut
+
+sub shutdown { 
+    my $self = shift;
+    my (%args) = @_;
+    $args{type} = 'shutdown';
+
+    $self->_action(%args);
+}
+
+
 
 =head1 SYNOPSIS
  
