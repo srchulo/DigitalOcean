@@ -588,6 +588,16 @@ This method allows you to enable IPv6 networking on an existing Droplet (within 
 
 sub enable_ipv6 { shift->_action(@_, type => 'enable_ipv6') }
 
+=method enable_private_networking
+
+This method allows you to enable private networking on an existing Droplet (within a region that has private networking available). It returns a L<DigitalOcean::Action> object.
+
+    my $action = $droplet->enable_private_networking;
+
+=cut
+
+sub enable_private_networking { shift->_action(@_, type => 'enable_private_networking') }
+
 =head1 SYNOPSIS
  
     FILL ME IN   
