@@ -367,6 +367,7 @@ sub power_on { shift->_action(@_, type => 'power_on') }
 =method restore
  
 This method allows you to restore a droplet with a previous image or snapshot. This will be a mirror copy of the image or snapshot to your droplet. Be sure you have backed up any necessary information prior to restore.
+It returns a L<DigitalOcean::Action> object.
  
 =over 4
  
@@ -383,6 +384,18 @@ A Droplet restoration will rebuild an image using a backup image. The image ID t
 =cut
 
 sub restore { shift->_action(@_, type => 'restore') }
+
+=method password_reset
+
+This method will reset the root password for a droplet. Please be aware that this will reboot the droplet to allow resetting the password.
+
+    my $action = $droplet->password_reset;
+
+=cut
+
+sub password_reset { shift->_action(@_, type => 'password_reset') }
+
+
 
 =head1 SYNOPSIS
  
