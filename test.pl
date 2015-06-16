@@ -46,7 +46,14 @@ print $net->v4->[0]->gateway;
 exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
-my $droplet = $do->droplet(5742146);
+my $droplet = $do->droplet(5742606);
+    my $actions = $droplet->enable_private_networking_reboot;
+
+    for my $action (@$actions) { 
+        print $action->id . ' ' . $action->status . "\n";
+    }
+
+exit;
 $droplet->power_off(wait_on_action => 1);
 my $action = $droplet->enable_private_networking(wait_on_action => 1);
 $droplet->power_on(wait_on_action => 1);

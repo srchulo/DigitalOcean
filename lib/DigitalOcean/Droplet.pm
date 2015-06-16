@@ -438,6 +438,7 @@ sub resize { shift->_action(@_, type => 'resize') }
 
 =method resize_reboot
  
+In order to call L</resize_reboot>, your droplet must be powered off.
 If your droplet is already running, this method makes a call to L<resize|/"resize">
 for you and powers off your droplet, and then powers it on after it is done resizing
 and handles L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> to finish so you do not have to write this code.
@@ -597,6 +598,43 @@ This method allows you to enable private networking on an existing Droplet (with
 =cut
 
 sub enable_private_networking { shift->_action(@_, type => 'enable_private_networking') }
+
+=method enable_private_networking_reboot
+ 
+In order to call L</enable_private_networking>, your droplet must be powered off.
+If your droplet is already running, this method makes a call to L</enable_private_networking>
+for you and powers off your droplet, and then powers it on after it is done 
+and handles L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> to finish so you do not have to write this code.
+This is essentially the code that L</enable_private_networking> performs for you:
+ 
+    $droplet->power_off(wait_on_action => 1);
+
+    $droplet->enable_private_networking(wait_on_action => 1);
+
+    $droplet->power_on(wait_on_event => 1);
+
+So a call to L</enable_private_networking> would look like:
+
+    my $actions = $droplet->enable_private_networking_reboot;
+
+    for my $action (@$actions) { 
+        print $action->id . ' ' . $action->status . "\n";
+    }
+
+It returns an array reference of all three actions returned by L</power_off>, L</enable_private_networking>, and L</power_on>.
+ 
+=cut
+ 
+sub enable_private_networking_reboot { 
+    my $self = shift;
+    my @arr;
+
+    push(@arr, $self->power_off(wait_on_action => 1));
+    push(@arr, $self->enable_private_networking(@_, wait_on_action => 1));
+    push(@arr, $self->power_on(wait_on_action => 1));
+
+    return \@arr;
+}
 
 =head1 SYNOPSIS
  
