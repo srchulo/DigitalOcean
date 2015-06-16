@@ -623,7 +623,7 @@ This is essentially the code that L</enable_private_networking> performs for you
 
     $droplet->power_on(wait_on_event => 1);
 
-So a call to L</enable_private_networking> would look like:
+So a call to L</enable_private_networking_reboot> would look like:
 
     my $actions = $droplet->enable_private_networking_reboot;
 
@@ -677,6 +677,40 @@ sub snapshot {
     $self->snapshot_ids($temp_droplet->snapshot_ids);
 
     return $action;
+}
+
+=head2 snapshot_reboot
+ 
+If your droplet is already running, this method makes a call to L</snapshot>
+for you and powers off your droplet, and then powers it on after it is done taking a snapshot
+and handles L<waiting on each event|DigitalOcean/"WAITING ON EVENTS"> to finish so you do not have to write this code.
+This is essentially the code that L</snapshot_reboot> performs for you:
+ 
+    $droplet->power_off(wait_on_event => 1);
+    $droplet->snapshot(wait_on_event => 1); #snapshot powers your droplet back on for you
+ 
+
+So a call to L</snapshot_reboot> would look like:
+
+    my $actions = $droplet->snapshot_reboot;
+
+    for my $action (@$actions) { 
+        print $action->id . ' ' . $action->status . "\n";
+    }
+
+It returns an array reference of both actions returned by L</power_off>, L</snapshot_reboot>.
+
+=cut
+ 
+sub snapshot_reboot { 
+    my $self = shift;
+
+    my @arr;
+
+    push(@arr, $self->power_off(wait_on_action => 1));
+    push(@arr, $self->snapshot(@_, wait_on_action => 1));
+
+    return \@arr;
 }
 
 =head1 SYNOPSIS
