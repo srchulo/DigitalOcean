@@ -104,8 +104,7 @@ sub path {
 
 =method update
  
-This method edits an existing domain record. It updates the L<DigitalOcean::Domain::Record> object
-to reflect the changes.
+This method edits an existing domain record. 
  
 =over 4
  
@@ -135,19 +134,21 @@ B<weight> Number, The weight of records with the same priority (for SRV records 
  
 =back
  
-    $record->update(
+    my $updated_record = $record->update(
         record_type => 'A',
         name => 'newname',
         data => '196.87.89.45',
     );
  
+This method returns the updated L<DigitalOcean::Domain::Record>.
+
 =cut
 
 sub update { 
     my $self = shift;
     my (%args) = @_;
 
-    my $do_response = $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::Domain::Record', 'domain_record', \%args);
+    return $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::Domain::Record', 'domain_record', \%args);
 }
 
 =method delete
