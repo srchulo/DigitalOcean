@@ -162,6 +162,31 @@ sub actions {
     return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', {per_page => $per_page}, $init_arr);
 }
 
+=method update
+ 
+This method edits an existing image.
+ 
+=over 4
+ 
+=item 
+ 
+B<name> Required, String, The new name that you would like to use for the image.
+ 
+=back
+ 
+    my $updated_image = $image->update(name => 'newname');
+
+This method returns the updated L<DigitalOcean::Image>.
+ 
+=cut
+
+sub update { 
+    my $self = shift;
+    my (%args) = @_;
+
+    return $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::Image', 'image', \%args);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
