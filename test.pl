@@ -47,6 +47,15 @@ exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
+    my $image = $do->image(11836690);
+
+    #or
+
+    #my $image = $do->image('ubuntu-14-04-x64');
+
+    print Data::Dumper->Dump([$image]);
+    exit;
+
 $do->per_page(20);
 
     my $images_collection = $do->user_images;

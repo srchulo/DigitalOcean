@@ -891,6 +891,26 @@ sub user_images {
     return $self->_images({per_page => $per_page, private => 'true'});
 }
 
+=method image
+
+This will retrieve an image by id or by slug and return a L<DigitalOcean::Image> object.
+
+    my $image = $do->image(11836690);
+
+    #or
+
+    my $image = $do->image('ubuntu-14-04-x64');
+
+=cut
+
+sub image {
+    my ($self, $id_or_slug) = @_;
+
+    my $image = $self->_get_object("images/$id_or_slug", 'DigitalOcean::Image', 'image');
+
+    return $image;
+}
+
 __PACKAGE__->meta->make_immutable();
 
 1;
