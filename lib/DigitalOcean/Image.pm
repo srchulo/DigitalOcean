@@ -187,6 +187,17 @@ sub update {
     return $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::Image', 'image', \%args);
 }
 
+=method delete
+
+This deletes an image. This will return 1 on success and undef on failure.
+
+=cut
+
+sub delete { 
+    my ($self) = @_;
+    return $self->DigitalOcean->_delete(path => $self->path);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
