@@ -761,6 +761,12 @@ sub droplet_upgrades {
     return $self->_get_array('droplet_upgrades', 'DigitalOcean::Droplet::Upgrade');
 }
 
+sub _images { 
+    my ($self, $params) = @_;
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->_get_collection('images', 'DigitalOcean::Image', 'images', $params, $init_arr);
+}
+
 =method images
  
 This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Image> objects of the images collection. 
@@ -789,8 +795,7 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub images {
     my ($self, $per_page) = @_;
-    my $init_arr = [['DigitalOcean', $self]];
-    return $self->_get_collection('images', 'DigitalOcean::Image', 'images', {per_page => $per_page}, $init_arr);
+    return $self->_images({per_page => $per_page});
 }
 
 =method distribution_images 
@@ -821,11 +826,39 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub distribution_images {
     my ($self, $per_page) = @_;
-    my $init_arr = [['DigitalOcean', $self]];
-    return $self->_get_collection('images', 'DigitalOcean::Image', 'images', {per_page => $per_page, type => 'distribution'}, $init_arr);
+    return $self->_images({per_page => $per_page, type => 'distribution'});
 }
 
+=method application_images 
 
+This method will retrieve only application images. It returns a L<DigitalOcean::Collection> of L<DigitalOcean::Image> objects.
+
+    my $images_collection = $do->application_images;
+    my $obj;
+
+    while($obj = $images_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $images_collection = $do->application_images(2);
+    my $obj;
+
+    while($obj = $images_collection->next) { 
+        print $obj->name . "\n";
+    }
+ 
+=cut
+
+sub application_images {
+    my ($self, $per_page) = @_;
+    return $self->_images({per_page => $per_page, type => 'application'});
+}
 
 __PACKAGE__->meta->make_immutable();
 
