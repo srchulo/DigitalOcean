@@ -89,7 +89,7 @@ If you would like a different C<per_page> value to be used for this collection i
 sub records {
     my ($self, $per_page) = @_;
     my $init_arr = [['DigitalOcean', $self->DigitalOcean], ['Domain', $self]];
-    return $self->DigitalOcean->_get_collection($self->path, 'DigitalOcean::Domain::Record', 'domain_records', $per_page, $init_arr);
+    return $self->DigitalOcean->_get_collection($self->path, 'DigitalOcean::Domain::Record', 'domain_records', {per_page => $per_page}, $init_arr);
 }
 
 

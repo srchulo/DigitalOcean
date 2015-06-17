@@ -48,6 +48,15 @@ exit;
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
 $do->per_page(20);
+    my $images_collection = $do->distribution_images;
+    my $obj;
+
+    while($obj = $images_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+exit;
+
     #set this collection to have 2 objects returned per page
     my $images_collection = $do->images;
     my $obj;

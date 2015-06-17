@@ -160,7 +160,7 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub kernels { 
     my ($self, $per_page) = @_;
-    return $self->DigitalOcean->_get_collection($self->path . 'kernels', 'DigitalOcean::Kernel', 'kernels', $per_page);
+    return $self->DigitalOcean->_get_collection($self->path . 'kernels', 'DigitalOcean::Kernel', 'kernels', {per_page => $per_page});
 }
 
 =method snapshots
@@ -192,7 +192,7 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub snapshots { 
     my ($self, $per_page) = @_;
-    return $self->DigitalOcean->_get_collection($self->path . 'snapshots', 'DigitalOcean::Snapshot', 'snapshots', $per_page);
+    return $self->DigitalOcean->_get_collection($self->path . 'snapshots', 'DigitalOcean::Snapshot', 'snapshots', {per_page => $per_page});
 }
 
 =method backups
@@ -224,7 +224,7 @@ If you would like a different C<per_page> value to be used for this collection i
 
 sub backups { 
     my ($self, $per_page) = @_;
-    return $self->DigitalOcean->_get_collection($self->path . 'backups', 'DigitalOcean::Backup', 'backups', $per_page);
+    return $self->DigitalOcean->_get_collection($self->path . 'backups', 'DigitalOcean::Backup', 'backups', {per_page => $per_page});
 }
 
 =method actions
@@ -257,7 +257,7 @@ If you would like a different C<per_page> value to be used for this collection i
 sub actions { 
     my ($self, $per_page) = @_;
     my $init_arr = [['DigitalOcean', $self]];
-    return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', $per_page, $init_arr);
+    return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', {per_page => $per_page}, $init_arr);
 }
 
 =method delete

@@ -63,20 +63,20 @@ has last_page => (
     default => 1,
 );
 
-=method per_page
+=method params
 
-This method can be used to override the L<DigitalOcean/per_page> setting in the L<DigitalOcean> class. This should not be
+This method is used to set the parameters in the URLs used to request the next set of objects in the collection. This should not be
 called by the user directly, but rather will be passed in by L<DigitalOcean> when a subroutine that returns a collection is called.
 It should be passed in when the L<DigitalOcean::Collection> object is created, because it will mess
 with the paging of the objects if changed after paging has begun.
 
-    my $do_collection = DigitalOcean::Collection->new(per_page => 10);
+    my $do_collection = DigitalOcean::Collection->new(params => {per_page => 2});
 
 =cut
 
-has per_page => (
+has params => (
     is => 'rw',
-    isa => 'Undef|Int',
+    isa => 'Undef|HashRef',
     default => undef,
 );
 
@@ -244,10 +244,10 @@ sub _request_next_page {
     return unless $self->pages->next;
 
     my ($path, $cur_page) = $self->_get_path_and_page($self->pages->next);
-    my $params = {page => $cur_page};
+    $self->params->{page} = $cur_page;
 
     #request next set of objects
-    my $do_response = $self->DigitalOcean->_GET(path => $path, params => $params, per_page => $self->per_page);
+    my $do_response = $self->DigitalOcean->_GET(path => $path, params => $self->params);
     $self->response($do_response);
 
     $self->_update;
