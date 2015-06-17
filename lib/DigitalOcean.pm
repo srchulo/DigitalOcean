@@ -860,6 +860,37 @@ sub application_images {
     return $self->_images({per_page => $per_page, type => 'application'});
 }
 
+=method user_images
+
+This method will retrieve only your private images. It returns a L<DigitalOcean::Collection> of L<DigitalOcean::Image> objects.
+
+    my $images_collection = $do->user_images;
+    my $obj;
+
+    while($obj = $images_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $images_collection = $do->user_images(2);
+    my $obj;
+
+    while($obj = $images_collection->next) { 
+        print $obj->name . "\n";
+    }
+ 
+=cut
+
+sub user_images {
+    my ($self, $per_page) = @_;
+    return $self->_images({per_page => $per_page, private => 'true'});
+}
+
 __PACKAGE__->meta->make_immutable();
 
 1;
