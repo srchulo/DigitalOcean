@@ -110,6 +110,58 @@ has created_at => (
     isa => 'Str',
 );
 
+=method path
+
+Returns the api path for this domain
+
+=cut
+
+has path => (
+    is => 'rw',
+    isa => 'Str',
+);
+
+sub BUILD { 
+    my ($self) = @_;
+    
+    $self->path('images/' . $self->id . '/');
+}
+
+
+
+=method actions
+ 
+This will retrieve all actions that have been executed on an Image
+by returning a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Action> objects of the actions collection. 
+ 
+    my $actions_collection = $image->actions;
+    my $obj;
+
+    while($obj = $actions_collection->next) { 
+        print $obj->id . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L<per_page|DigitalOcean/"per_page">, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $actions_collection = $image->actions(2);
+    my $obj;
+
+    while($obj = $actions_collection->next) { 
+        print $obj->id . "\n";
+    }
+ 
+=cut
+
+sub actions { 
+    my ($self, $per_page) = @_;
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->DigitalOcean->_get_collection($self->path . 'actions', 'DigitalOcean::Action', 'actions', {per_page => $per_page}, $init_arr);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
