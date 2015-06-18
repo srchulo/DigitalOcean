@@ -47,6 +47,15 @@ exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
+    $do->per_page(3);
+    my $regions_collection = $do->regions;
+    my $obj;
+
+    while($obj = $regions_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+exit;
 #    my $ssh_key = $do->create_ssh_key(
 #        name => 'neww_ssh_key',
 #        public_key => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAQQDDHr/jh2Jy4yALcK4JyWbVkPRaWmhck3IgCoeOO3z1e2dBowLh64QAM+Qb72pxekALga2oi4GvT+TlWNhzPH4Z example',
