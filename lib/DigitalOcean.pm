@@ -953,6 +953,39 @@ sub ssh_keys {
     return $self->_get_collection('account/keys', 'DigitalOcean::SSH::Key', 'ssh_keys', {per_page => $per_page}, $init_arr);
 }
 
+=method create_ssh_key
+ 
+This will create a new ssh key and add it to your account and return a L<DigitalOcean::SSH::Key> object. The parameters are:
+ 
+=over 4
+ 
+=item 
+ 
+B<name> Required, String, The name to give the new SSH key in your account.
+ 
+=item
+ 
+B<public_key> Required, String, A string containing the entire public key.
+ 
+=back
+ 
+    my $ssh_key = $do->create_ssh_key(
+        name => 'new_ssh_key',
+        public_key => $ssh_pub_key,
+    );
+
+=cut
+ 
+sub create_ssh_key {
+    my $self = shift;
+    my %args = @_;
+
+    my $ssh_key = $self->_create('account/keys', 'DigitalOcean::SSH::Key', 'ssh_key', \%args);
+    $ssh_key->DigitalOcean($self);
+
+    return $ssh_key;
+}
+
 __PACKAGE__->meta->make_immutable();
 
 1;
