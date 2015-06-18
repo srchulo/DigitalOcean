@@ -127,8 +127,6 @@ sub BUILD {
     $self->path('images/' . $self->id . '/');
 }
 
-
-
 =method actions
  
 This will retrieve all actions that have been executed on an Image
