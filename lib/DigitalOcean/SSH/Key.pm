@@ -60,10 +60,40 @@ Returns the api path for this domain
 =cut
 
 has path => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
-    default => 'account/keys/',
 );
+
+sub BUILD { 
+    my ($self) = @_;
+
+    $self->path('account/keys/' . $self->id);
+}
+
+=method update
+ 
+This method updates an SSH key.
+ 
+=over 4
+ 
+=item 
+ 
+B<name> Required, String, The name to give the new SSH key in your account.
+ 
+=back
+ 
+    my $updated_ssh_key = $ssh_key->update(name => 'newname');
+ 
+This method returns the updated L<DigitalOcean::SSH::Key>.
+
+=cut
+
+sub update { 
+    my $self = shift;
+    my (%args) = @_;
+
+    return $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::SSH::Key', 'ssh_key', \%args);
+}
 
 =head1 SYNOPSIS
  
