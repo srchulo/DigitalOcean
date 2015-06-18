@@ -198,6 +198,32 @@ sub delete {
     return $self->DigitalOcean->_delete(path => $self->path);
 }
 
+=head2 Actions
+
+=method transfer
+ 
+This method transfers an image to another region. It returns a L<DigitalOcean::Action> object.
+ 
+=over 4
+ 
+=item 
+ 
+B<region> Required, String, The region slug that represents the region target.
+ 
+=back
+ 
+    my $action = $image->transfer(region => 'nyc2');
+
+=cut
+
+sub transfer { 
+    my $self = shift;
+    my (%args) = @_;
+
+    $args{type} = 'transfer';
+    return $self->DigitalOcean->_post_object($self->path . 'actions', 'DigitalOcean::Action', 'action', \%args);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   

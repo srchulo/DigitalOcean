@@ -287,6 +287,8 @@ sub _request {
         my $json_coder = JSON::XS->new->ascii->allow_nonref;
         my $req_body = $json_coder->encode($req_body_hash);
         $req->content($req_body);
+
+        print "REQ BODY $req_body\n";
     }
 
     my $response = $self->ua->request($req);
@@ -462,6 +464,13 @@ sub _put_object {
     my ($self, $path, $type_name, $json_key, $req_body_hash) = @_;
 
     my $do_response = $self->_PUT(path => $path, req_body_hash => $req_body_hash);
+    return $self->_decode($type_name, $do_response->json, $json_key);
+}
+
+sub _post_object { 
+    my ($self, $path, $type_name, $json_key, $req_body_hash) = @_;
+
+    my $do_response = $self->_POST(path => $path, req_body_hash => $req_body_hash);
     return $self->_decode($type_name, $do_response->json, $json_key);
 }
 
