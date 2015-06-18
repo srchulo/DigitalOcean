@@ -986,6 +986,28 @@ sub create_ssh_key {
     return $ssh_key;
 }
 
+=method ssh_key
+
+This will retrieve an ssh key by id or by fingerprint and return a L<DigitalOcean::SSH::Key> object.
+
+    my $ssh_key = $do->ssh_key(11836690);
+
+    #or
+
+    my $ssh_key = $do->ssh_key('7a:61:d4:1c:b3:b0:c6:0b:9e:e2:c9:ff:35:f0:a0:dd');
+
+=cut
+
+sub ssh_key {
+    my ($self, $id_or_finger) = @_;
+
+    my $ssh_key = $self->_get_object("account/keys/$id_or_finger", 'DigitalOcean::SSH::Key', 'ssh_key');
+
+    return $ssh_key;
+}
+
+
+
 __PACKAGE__->meta->make_immutable();
 
 1;
