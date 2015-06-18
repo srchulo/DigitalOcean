@@ -224,6 +224,22 @@ sub transfer {
     return $self->DigitalOcean->_post_object($self->path . 'actions', 'DigitalOcean::Action', 'action', \%args);
 }
 
+=method convert
+ 
+This method converts an image to a snapshot, such as a backup to a snapshot. It returns a L<DigitalOcean::Action> object.
+ 
+    my $action = $image->convert;
+
+=cut
+
+sub convert { 
+    my $self = shift;
+    my (%args) = @_;
+
+    $args{type} = 'convert';
+    return $self->DigitalOcean->_post_object($self->path . 'actions', 'DigitalOcean::Action', 'action', \%args);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
