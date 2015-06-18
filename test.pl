@@ -47,7 +47,19 @@ exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
+
+
     $do->per_page(3);
+    #set this collection to have 2 objects returned per page
+    my $sizes_collection = $do->sizes;
+    my $obj;
+
+    while($obj = $sizes_collection->next) { 
+        print $obj->slug . "\n";
+    }
+
+
+exit;
     my $regions_collection = $do->regions;
     my $obj;
 

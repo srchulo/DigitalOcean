@@ -1037,6 +1037,36 @@ sub regions {
     return $self->_get_collection('regions', 'DigitalOcean::Region', 'regions', {per_page => $per_page});
 }
 
+=method sizes
+ 
+This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::Size> objects of the sizes collection. 
+ 
+    my $sizes_collection = $do->sizes;
+    my $obj;
+
+    while($obj = $sizes_collection->next) { 
+        print $obj->slug . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $sizes_collection = $do->sizes(2);
+    my $obj;
+
+    while($obj = $sizes_collection->next) { 
+        print $obj->slug . "\n";
+    }
+ 
+=cut
+
+sub sizes {
+    my ($self, $per_page) = @_;
+    return $self->_get_collection('sizes', 'DigitalOcean::Size', 'sizes', {per_page => $per_page});
+}
 
 __PACKAGE__->meta->make_immutable();
 

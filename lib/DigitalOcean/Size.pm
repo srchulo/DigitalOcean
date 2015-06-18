@@ -103,12 +103,6 @@ has regions => (
     isa => 'ArrayRef[Str]',
 );
 
-has features => ( 
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub { [] },
-);
-
 =head1 SYNOPSIS
  
     FILL ME IN   
