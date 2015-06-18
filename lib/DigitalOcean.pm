@@ -11,6 +11,7 @@ use DigitalOcean::Account;
 use DigitalOcean::Action;
 use DigitalOcean::Domain;
 use DigitalOcean::Droplet::Upgrade;
+use DigitalOcean::SSH::Key;
 
 #for requesting
 use LWP::UserAgent;
@@ -918,6 +919,38 @@ sub image {
     my $image = $self->_get_object("images/$id_or_slug", 'DigitalOcean::Image', 'image');
 
     return $image;
+}
+
+=method ssh_keys
+ 
+This will return a L<DigitalOcean::Collection> that can be used to iterate through the L<DigitalOcean::SSH::Key> objects of the droplets collection. 
+ 
+    my $keys_collection = $do->ssh_keys
+    my $obj;
+
+    while($obj = $keys_collection->next) { 
+        print $obj->name . "\n";
+    }
+
+If you would like a different C<per_page> value to be used for this collection instead of L</per_page>, it can be passed in as a parameter:
+
+    #set default for all collections to be 30
+    $do->per_page(30);
+
+    #set this collection to have 2 objects returned per page
+    my $keys_collection = $do->ssh_keys(2);
+    my $obj;
+
+    while($obj = $keys_collection->next) { 
+        print $obj->name . "\n";
+    }
+ 
+=cut
+
+sub ssh_keys {
+    my ($self, $per_page) = @_;
+    my $init_arr = [['DigitalOcean', $self]];
+    return $self->_get_collection('account/keys', 'DigitalOcean::SSH::Key', 'ssh_keys', {per_page => $per_page}, $init_arr);
 }
 
 __PACKAGE__->meta->make_immutable();

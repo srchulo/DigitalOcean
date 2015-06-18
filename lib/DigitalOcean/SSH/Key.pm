@@ -4,6 +4,11 @@ use Mouse;
 
 #ABSTRACT: Represents a SSH Key object in the DigitalOcean API
 
+has DigitalOcean => (
+    is => 'rw',
+    isa => 'DigitalOcean',
+);
+
 =method id
 
 This is a unique identification number for the key. This can be used to reference a specific SSH key when you wish to embed a key into a Droplet.
