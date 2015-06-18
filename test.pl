@@ -54,6 +54,12 @@ my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299
 
 #my $ssh_key = $do->ssh_key(908682);
 my $ssh_key = $do->ssh_key('7b:51:c4:1c:b3:b0:c7:0b:ba:e2:c9:ff:35:f0:e8:dd');
+
+
+my $true =$ssh_key->delete;
+print "$true\n";
+exit;
+
 $ssh_key = $ssh_key->update(name => 'srslynewname');
 
     print "ID " . $ssh_key->id . "\n";

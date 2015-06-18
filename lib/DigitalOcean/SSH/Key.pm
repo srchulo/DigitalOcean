@@ -95,6 +95,17 @@ sub update {
     return $self->DigitalOcean->_put_object($self->path, 'DigitalOcean::SSH::Key', 'ssh_key', \%args);
 }
 
+=method delete
+
+This deletes the public SSH Key from your account. This will return 1 on success and undef on failure.
+
+=cut
+
+sub delete { 
+    my ($self) = @_;
+    return $self->DigitalOcean->_delete(path => $self->path);
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
