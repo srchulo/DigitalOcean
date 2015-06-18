@@ -47,7 +47,18 @@ exit;
 =cut
 my $do = DigitalOcean->new(oauth_token => 'a4a582d91e8585d481f1c4388c73e66a7c299ffbbaeffd85d54cb03db502eb9c');
 
-my $image = $do->image(2179840);
+my $image = $do->image(12348713);
+
+    my $actions_collection = $image->actions(2);
+    my $obj;
+
+    while($obj = $actions_collection->next) { 
+        print $obj->id . "\n";
+    }
+exit;
+
+
+
 my $action = $image->convert;
 
 print Data::Dumper->Dump([$action]);

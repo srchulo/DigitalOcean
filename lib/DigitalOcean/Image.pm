@@ -240,6 +240,20 @@ sub convert {
     return $self->DigitalOcean->_post_object($self->path . 'actions', 'DigitalOcean::Action', 'action', \%args);
 }
 
+=method action
+
+This will retrieve an action associated with the L<DigitalOcean::Image> object by id and return a L<DigitalOcean::Action> object.
+
+    my $action = $image->action(56789);
+
+=cut
+
+sub action { 
+    my ($self, $id) = @_;
+
+    return $self->DigitalOcean->_get_object($self->path . "actions/$id", 'DigitalOcean::Action', 'action');
+}
+
 =head1 SYNOPSIS
  
     FILL ME IN   
