@@ -101,6 +101,15 @@ use constant {
     HEAD => 'HEAD',
 };
 
+=head1 DOCUMENTATION NEEDS WORK
+
+So I have updated the DigitalOcean module to be compatible with version 2. Unfortunately I have not had time to
+finish writing the documentation or tests yet. However, I have chosen to release the module anyway since as of
+November 1, 2015 API 1 will no longer work, which means that the older versions of this module will no longer work.
+I will try to update with documentation and tests as soon as I can. Until then, if something is unclear you can
+look at the code to help figure out how it works. You can also submit a L<pull request|https://github.com/srchulo/DigitalOcean/tree/v2>
+if you'd like to help with the documentation.
+
 =head1 WAITING ON ACTIONS
  
 =head2 wait_on_actions

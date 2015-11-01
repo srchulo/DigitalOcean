@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.15    November 1, 2015
+        Updated to new API without finished documentation or tests
+
 0.14    April 26, 2015
         Made DigitalOcean::Domain::Record::destroy work
 
