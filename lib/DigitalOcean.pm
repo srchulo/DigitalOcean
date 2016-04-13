@@ -273,7 +273,6 @@ sub _request {
     }
 
     $uri->query_form($params);
-    print "REQUESTING " . $uri->as_string . "\n";
 
     my $req = HTTP::Request->new(
         $req_method,
