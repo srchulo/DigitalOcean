@@ -1,5 +1,8 @@
 Revision history for DigitalOcean
 
+0.16    April 13, 2016
+        Removed test.pl so tests won't fail and removed debug messages from _request.
+
 0.15    November 1, 2015
         Updated to new API without finished documentation or tests
 
