@@ -1,5 +1,9 @@
 Revision history for DigitalOcean
 
+0.18
+        October 5, 2019
+        Auto generate min perl version using pluging [MinimumPerlFast]. (@manwar)
+
 0.17    October 4, 2019
         Auto generate META.json using the plugin [MetaJSON]. (@manwar)
 
